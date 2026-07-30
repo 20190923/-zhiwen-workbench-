@@ -189,6 +189,27 @@ table.data-table{width:100%;border-collapse:collapse;font-size:13px}
 .shadow-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px}
 .shadow-progress{font-size:12px;color:var(--text-muted)}
 .shadow-actions{display:flex;gap:6px;flex-wrap:wrap}
+/* ===== 英语单词翻译弹出层 ===== */
+.essay-word{cursor:pointer;border-radius:2px;padding:0 1px;transition:background .15s}
+.essay-word:hover{background:rgba(248,200,214,.5);text-decoration:underline;text-decoration-color:var(--accent-deep);text-decoration-thickness:1px;text-underline-offset:2px}
+.word-tooltip{position:fixed;z-index:10000;background:#fff;border:2px solid var(--accent);border-radius:12px;padding:14px 16px;max-width:300px;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,.15);font-size:13px;display:none;animation:fadeIn .15s ease}
+.word-tooltip.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.word-tooltip .wt-close{position:absolute;top:4px;right:8px;font-size:16px;color:var(--text-muted);cursor:pointer;line-height:1}
+.word-tooltip .wt-word{font-size:16px;font-weight:700;color:var(--text-title);font-family:Georgia,"Times New Roman",serif}
+.word-tooltip .wt-phonetic{font-size:12px;color:var(--text-muted);margin-top:2px;font-style:italic}
+.word-tooltip .wt-def{font-size:12px;color:var(--text-section);line-height:1.6;margin-top:6px}
+.word-tooltip .wt-speak{display:inline-block;margin-left:6px;font-size:14px;cursor:pointer;color:var(--accent-deep)}
+.word-tooltip .wt-loading{text-align:center;color:var(--text-muted);padding:8px 0;font-size:12px}
+/* ===== 政治知识点可展开 ===== */
+.pol-point{background:var(--bg-input);border:1px solid var(--border-soft);border-radius:10px;margin-bottom:6px;overflow:hidden}
+.pol-point-header{display:flex;align-items:center;gap:6px;padding:10px 12px;cursor:pointer;font-size:13px;color:var(--text-section);transition:background .15s}
+.pol-point-header:hover{background:var(--accent-light)}
+.pol-point-header .pp-arrow{font-size:10px;color:var(--accent-deep);transition:transform .2s;display:inline-block;width:14px}
+.pol-point.expanded .pp-arrow{transform:rotate(90deg)}
+.pol-point-header .pp-title{flex:1;font-weight:500}
+.pol-point-detail{display:none;padding:10px 14px 12px 32px;font-size:12px;color:var(--text-body);line-height:1.7;border-top:1px dashed var(--border-soft);background:#fff}
+.pol-point.expanded .pol-point-detail{display:block}
 .mobile-overlay.show{display:block}@media(min-width:769px){.sidebar.open{transform:translateX(calc(var(--sidebar-width) * -1))}.sidebar.open~.main-content{margin-left:0}}@media(max-width:768px){.sidebar{transform:translateX(-100%);box-shadow:2px 0 12px rgba(232,154,171,.12)}.sidebar.open{transform:translateX(0)}.main-content{margin-left:0;padding:56px 16px 24px}.dashboard-grid{grid-template-columns:1fr}.form-row{flex-direction:column;gap:8px}.form-group{min-width:100%}.stat-row{gap:16px}.data-table{font-size:12px}.data-table th,.data-table td{padding:6px 8px}.floating-formula-btn{bottom:16px;right:16px;width:40px;height:40px;font-size:16px}}
 </style>
 </head>
@@ -865,26 +886,52 @@ function renderWrongQs(){
 // ========== 政治 ==========
 const POL_MODULES=[
 {name:"马克思主义哲学",key:"marx",points:[
-"哲学基本问题：思维与存在的关系","物质与意识的辩证关系","唯物辩证法的三大规律：对立统一、量变质变、否定之否定",
-"实践是认识的基础","真理的客观性、绝对性与相对性","社会存在与社会意识的辩证关系",
-"生产力与生产关系的矛盾运动","经济基础与上层建筑的矛盾运动","人民群众是历史的创造者"
+{title:"哲学基本问题：思维与存在的关系",detail:"恩格斯指出，全部哲学的重大的基本问题是思维和存在的关系问题。包括两方面：第一性问题（唯物主义 vs 唯心主义）和同一性问题（可知论 vs 不可知论）。马克思主义坚持物质第一性、思维第二性，思维能够认识存在。"},
+{title:"物质与意识的辩证关系",detail:"物质是标志客观实在的哲学范畴，意识是物质世界长期发展的产物。物质决定意识，意识对物质具有能动作用——意识不仅能反映世界，还能通过实践改造世界。实践是沟通主客观的桥梁。"},
+{title:"唯物辩证法的三大规律",detail:"①对立统一规律（核心）：揭示事物发展的动力和源泉；②量变质变规律：揭示事物发展的状态和形式；③否定之否定规律：揭示事物发展的方向和道路。三大规律相互联系，构成辩证法的科学体系。"},
+{title:"实践是认识的基础",detail:"实践是认识的来源、动力、目的和检验真理的唯一标准。认识从实践中来，最终又回到实践中去。'实践→认识→再实践→再认识'的循环往复、螺旋上升，体现了认识发展的辩证过程。"},
+{title:"真理的客观性、绝对性与相对性",detail:"真理是标志主观同客观相符合的哲学范畴。客观性：真理中包含不以人的意志为转移的客观内容。绝对性：任何真理都包含同客体相符合的客观内容。相对性：真理受历史条件限制，有待扩展和深化。真理是绝对性和相对性的统一。"},
+{title:"社会存在与社会意识的辩证关系",detail:"社会存在（物质生活条件，主要是生产方式）决定社会意识，社会意识对社会存在有相对独立性和反作用。社会意识的发展具有历史继承性，与经济发展有不平衡性，先进的社会意识对社会发展起推动作用。"},
+{title:"生产力与生产关系的矛盾运动",detail:"生产力（劳动者+劳动资料+劳动对象）决定生产关系（所有制+人与人的关系+分配方式）。生产关系反作用于生产力。生产关系适合生产力发展时促进发展，不适合时阻碍发展。这一矛盾运动是社会发展的根本动力。"},
+{title:"经济基础与上层建筑的矛盾运动",detail:"经济基础（生产关系的总和）决定上层建筑（政治法律制度+社会意识形态）。上层建筑对经济基础有反作用。当上层建筑适合经济基础时促进其发展，否则阻碍。这一规律是社会发展的基本规律之一。"},
+{title:"人民群众是历史的创造者",detail:"人民群众是物质财富的创造者、精神财富的创造者、社会变革的决定力量。党的群众路线'一切为了群众，一切依靠群众，从群众中来，到群众中去'是这一原理的具体体现。"}
 ]},
 {name:"毛泽东思想",key:"mao",points:[
-"毛泽东思想是马克思主义中国化的第一次历史性飞跃","新民主主义革命理论","社会主义改造理论",
-"实事求是是毛泽东思想的活的灵魂","群众路线","独立自主",
-"农村包围城市、武装夺取政权的革命道路","三大法宝：统一战线、武装斗争、党的建设"
+{title:"毛泽东思想是马克思主义中国化的第一次历史性飞跃",detail:"毛泽东思想是马克思列宁主义普遍原理和中国革命具体实践相结合的产物。它回答了中国革命'走什么路、怎么走'的问题，开创了农村包围城市、武装夺取政权的道路。活的灵魂：实事求是、群众路线、独立自主。"},
+{title:"新民主主义革命理论",detail:"新民主主义革命的总路线：无产阶级领导的，人民大众的，反对帝国主义、封建主义和官僚资本主义的革命。革命对象：帝国主义和封建主义。革命领导阶级：无产阶级。革命前途：社会主义而非资本主义。"},
+{title:"社会主义改造理论",detail:"党在过渡时期的总路线：'一化三改'（逐步实现社会主义工业化，逐步实现对农业、手工业和资本主义工商业的社会主义改造）。对农业：合作化道路；对资本主义工商业：和平赎买政策。1956年三大改造完成，社会主义制度建立。"},
+{title:"实事求是是毛泽东思想的活的灵魂",detail:"实事求是就是一切从实际出发，理论联系实际。毛泽东在《改造我们的学习》中解释：'实事'是客观存在着的一切事物，'是'是客观事物的内部联系即规律性，'求'是去研究。这是党的思想路线的核心。"},
+{title:"群众路线",detail:"群众路线是一切为了群众、一切依靠群众，从群众中来、到群众中去。这是党的根本工作路线，体现了历史唯物主义关于人民群众是历史创造者的原理。'从群众中来'是集中群众意见形成正确领导意见，'到群众中去'是把领导意见化为群众行动。"},
+{title:"独立自主",detail:"独立自主就是坚持独立思考、独立决策，主要依靠本国人民力量进行革命和建设。毛泽东提出'自力更生为主，争取外援为辅'。这是中国革命和建设的基本立场和原则，也是外交政策的基本方针（和平共处五项原则）。"},
+{title:"农村包围城市、武装夺取政权的革命道路",detail:"毛泽东分析中国半殖民地半封建社会国情，创造性地开辟了农村包围城市、武装夺取政权的道路。核心思想：在敌人统治薄弱的农村建立根据地，以农村包围城市，最后夺取全国政权。不同于俄国十月革命的'城市中心论'。"},
+{title:"三大法宝：统一战线、武装斗争、党的建设",detail:"毛泽东在《〈共产党人〉发刊词》中总结中国革命三大法宝：①统一战线——团结一切可以团结的力量；②武装斗争——中国革命的主要形式；③党的建设——革命胜利的根本保证。三者相互联系，党的建设是核心。"}
 ]},
 {name:"中国特色社会主义理论",key:"soc",points:[
-"邓小平理论：什么是社会主义、怎样建设社会主义","三个代表重要思想","科学发展观",
-"社会主义本质：解放生产力，发展生产力","一个中心、两个基本点","社会主义初级阶段理论",
-"社会主义市场经济理论","一国两制"
+{title:"邓小平理论：什么是社会主义、怎样建设社会主义",detail:"邓小平理论的核心问题是什么是社会主义、怎样建设社会主义。首要基本理论问题：社会主义本质论——解放生产力，发展生产力，消灭剥削，消除两极分化，最终达到共同富裕。南方谈话提出了'三个有利于'标准。"},
+{title:"三个代表重要思想",detail:"江泽民提出：中国共产党始终代表中国先进生产力的发展要求，代表中国先进文化的前进方向，代表中国最广大人民的根本利益。核心是坚持党的先进性，本质是立党为公、执政为民。是对邓小平理论的继承和发展。"},
+{title:"科学发展观",detail:"胡锦涛提出科学发展观：第一要义是发展，核心是以人为本，基本要求是全面协调可持续，根本方法是统筹兼顾。回答了'实现什么样的发展、怎样发展'的问题。强调发展为了人民、发展依靠人民、发展成果由人民共享。"},
+{title:"社会主义本质：解放生产力，发展生产力",detail:"邓小平南方谈话指出社会主义本质：解放生产力，发展生产力，消灭剥削，消除两极分化，最终达到共同富裕。这五个方面是一个统一整体，前两句讲根本任务，中间两句讲社会关系变革，最后一句讲根本目标。"},
+{title:"一个中心、两个基本点",detail:"党的基本路线的核心内容。一个中心：以经济建设为中心；两个基本点：坚持四项基本原则（坚持社会主义道路、人民民主专政、共产党领导、马列毛），坚持改革开放。四项基本原则是立国之本，改革开放是强国之路。"},
+{title:"社会主义初级阶段理论",detail:"十三大提出：我国正处在社会主义初级阶段。含义：①我国已是社会主义社会；②我国的社会主义还处在初级阶段（生产力落后，商品经济不发达）。至少需要一百年时间。这是制定一切方针政策的根本依据。"},
+{title:"社会主义市场经济理论",detail:"邓小平南方谈话打破了计划经济=社会主义、市场经济=资本主义的传统观念。十四大确立建立社会主义市场经济体制的目标。核心：使市场在资源配置中起决定性作用，更好发挥政府作用，公有制为主体、多种所有制经济共同发展。"},
+{title:"一国两制",detail:"邓小平为解决港澳台问题提出：在一个中国前提下，大陆实行社会主义制度，港澳台保持资本主义制度长期不变。前提是一个中国。已成功解决香港（1997回归）和澳门（1999回归）问题。台湾问题尚未解决，一国两制是最佳方案。"}
 ]},
 {name:"习近平新时代中国特色社会主义思想",key:"xi",points:[
-"八个明确与十四个坚持","中国梦：国家富强、民族振兴、人民幸福","两个一百年奋斗目标",
-"五位一体总体布局","四个全面战略布局","新发展理念：创新、协调、绿色、开放、共享",
-"人类命运共同体","一带一路倡议","高质量发展","中国式现代化","全过程人民民主",
-"全面从严治党","国家安全观","文化自信"
-]},
+{title:"八个明确与十四个坚持",detail:"十九大提出习近平新时代中国特色社会主义思想的核心内容。八个明确：明确总任务、主要矛盾、总体布局和战略布局、全面深化改革总目标、全面推进依法治国总目标、强军目标、大国外交、党的领导。十四个坚持是基本方略。"},
+{title:"中国梦：国家富强、民族振兴、人民幸福",detail:"习近平提出中国梦：实现中华民族伟大复兴。本质是国家富强、民族振兴、人民幸福。中国梦是国家梦、民族梦，也是每个中国人的梦。必须走中国道路（中国特色社会主义），弘扬中国精神，凝聚中国力量。"},
+{title:"两个一百年奋斗目标",detail:"建党一百年（2021年）：全面建成小康社会（已实现）。新中国成立一百年（2049年）：建成富强民主文明和谐美丽的社会主义现代化强国。分两步走：2020-2035基本实现现代化，2035-2049建成现代化强国。"},
+{title:"五位一体总体布局",detail:"十八大确立：经济建设、政治建设、文化建设、社会建设、生态文明建设五位一体总体布局。五位一体是全面推进，经济是根本、政治是保障、文化是灵魂、社会是条件、生态是基础。体现了对社会主义建设规律认识的深化。"},
+{title:"四个全面战略布局",detail：习近平提出：全面建成小康社会（已完成）、全面深化改革、全面依法治国、全面从严治党。四个全面是有机整体：建成小康是目标，深化改革是动力，依法治国是保障，从严治党是关键。"},
+{title:"新发展理念：创新、协调、绿色、开放、共享",detail:"十八届五中全会提出新发展理念：创新（第一动力）、协调（内在要求）、绿色（必要条件）、开放（必由之路）、共享（本质要求）。五大理念相互贯通，是对我国发展全局的一场深刻变革。"},
+{title:"人类命运共同体",detail:"习近平提出构建人类命运共同体：建设持久和平、普遍安全、共同繁荣、开放包容、清洁美丽的世界。写入联合国决议。'一带一路'倡议是实践平台。体现了中国将自身发展与世界发展相统一的大国担当。"},
+{title:"一带一路倡议",detail:"丝绸之路经济带和21世纪海上丝绸之路。原则：共商共建共享。理念：开放、绿色、廉洁。目标：政策沟通、设施联通、贸易畅通、资金融通、民心相通。已获国际广泛响应，为全球经济治理提供中国方案。"},
+{title:"高质量发展",detail:"十九大报告指出我国经济已由高速增长阶段转向高质量发展阶段。核心要求：创新驱动、协调发展、绿色低碳、改革开放、共享发展。从'有没有'转向'好不好'。建设现代化经济体系是跨越关口的迫切要求。"},
+{title:"中国式现代化",detail:"二十大报告系统阐述中国式现代化五大特征：人口规模巨大的现代化、全体人民共同富裕的现代化、物质文明和精神文明协调发展的现代化、人与自然和谐共生的现代化、走和平发展道路的现代化。"},
+{title:"全过程人民民主",detail:"习近平提出全过程人民民主：最广泛、最真实、最管用的民主。特点：全链条、全方位、全覆盖。包括民主选举、民主协商、民主决策、民主管理、民主监督各环节。是社会主义民主政治的本质属性。"},
+{title:"全面从严治党",detail:"新时代党的建设总要求：以党的政治建设为统领，全面推进党的政治建设、思想建设、组织建设、作风建设、纪律建设，把制度建设贯穿其中。坚持严的主基调不动摇，'打铁必须自身硬'，反腐败斗争取得压倒性胜利。"},
+{title:"国家安全观",detail:"总体国家安全观：以人民安全为宗旨，以政治安全为根本，以经济安全为基础，以军事、文化、社会安全为保障，以促进国际安全为依托。涵盖政治、国土、军事、经济、文化、社会、科技、网络、生态、资源、核、海外利益等领域。"},
+{title:"文化自信",detail:"四个自信之一（道路自信、理论自信、制度自信、文化自信）。文化自信是更基础、更广泛、更深厚的自信。坚定文化自信：弘扬社会主义核心价值观，传承中华优秀传统文化，发展社会主义先进文化，讲好中国故事。"}
+]}
 ];
 const POL_ANSWER_TEMPLATES=[
 {title:"简答题通用模板",content:"1. 明确回答问题的核心概念\n2. 分点阐述（一般3-5点）\n3. 每点先写原理再结合实际\n4. 最后总结升华"},
@@ -910,8 +957,22 @@ function renderPolitics(){
 function switchPolModule(idx){
   document.querySelectorAll('#polChapters button').forEach((b,i)=>b.classList.toggle('active',i===idx));
   const m=POL_MODULES[idx];let html='';
-  m.points.forEach(p=>{html+=`<div class="knowledge-item"><span style="color:var(--accent-deep)">▸</span> ${p}</div>`;});
+  m.points.forEach((p,i)=>{
+    const title=typeof p==='string'?p:p.title;
+    const detail=typeof p==='object'&&p.detail?p.detail:'';
+    html+=`<div class="pol-point" id="polPoint${i}">`;
+    html+=`<div class="pol-point-header" onclick="togglePolPoint(${i})">`;
+    html+=`<span class="pp-arrow">▶</span>`;
+    html+=`<span class="pp-title">${title}</span>`;
+    html+=`</div>`;
+    if(detail)html+=`<div class="pol-point-detail">${detail}</div>`;
+    html+=`</div>`;
+  });
   document.getElementById('polContent').innerHTML=html;
+}
+function togglePolPoint(idx){
+  const el=document.getElementById('polPoint'+idx);
+  if(el)el.classList.toggle('expanded');
 }
 
 // ========== 时事政治数据（来自PDF 2025.7-2026.6）==========
@@ -1710,7 +1771,12 @@ function renderDailyEssay(){
   document.getElementById('dailyEssayBadge').textContent='Day '+(dailyEssayIdx+1)+' / '+DAILY_ESSAYS.length;
   document.getElementById('dailyEssayTopic').textContent='主题：'+e.topic;
   dailySentences=splitSentences(e.eng);
-  document.getElementById('dailyEssayEng').innerHTML=dailySentences.map((s,i)=>'<span class="essay-sentence" data-idx="'+i+'" onclick="ttsPlaySingle('+i+')">'+s+'</span> ').join('');
+  // 每个句子包裹为可点击 span（TTS），内部单词也可点击翻译
+  document.getElementById('dailyEssayEng').innerHTML=dailySentences.map((s,i)=>{
+    // 将句子中的单词逐个包裹为可点击 span，标点保持不变
+    const wrapped=s.replace(/([a-zA-Z][a-zA-Z'-]*)/g,'<span class="essay-word" onclick="event.stopPropagation();translateWord(this,\'$1\')">$1</span>');
+    return '<span class="essay-sentence" data-idx="'+i+'" onclick="ttsPlaySingle('+i+')">'+wrapped+'</span> ';
+  }).join('');
   document.getElementById('dailyEssayChn').textContent=e.chn;
   const st=document.getElementById('shadowTotal');if(st)st.textContent='共 '+dailySentences.length+' 句';
   const sc=document.getElementById('shadowCur');if(sc)sc.textContent='第 1 句';
@@ -1796,6 +1862,95 @@ function ttsShadowExit(){
   setTtsStatus('已退出跟读模式');
 }
 function setTtsStatus(msg){const el=document.getElementById('ttsStatus');if(el)el.textContent=msg;}
+// ===== 单词翻译功能 =====
+let wordTooltipEl=null;
+let wordTooltipTimer=null;
+function translateWord(el,word){
+  if(event)event.stopPropagation();
+  // 移除标点
+  word=word.replace(/[^a-zA-Z'-]/g,'').toLowerCase();
+  if(!word||word.length<2)return;
+  showWordTooltip(el,word);
+}
+function showWordTooltip(el,word){
+  hideWordTooltip();
+  const tooltip=document.createElement('div');
+  tooltip.className='word-tooltip';
+  tooltip.innerHTML='<div class="wt-loading">🔍 查询中...</div>';
+  document.body.appendChild(tooltip);
+  wordTooltipEl=tooltip;
+  // 定位
+  const rect=el.getBoundingClientRect();
+  let top=rect.bottom+6;
+  let left=rect.left;
+  // 防止超出右侧
+  const tw=280;
+  if(left+tw>window.innerWidth)left=window.innerWidth-tw-10;
+  // 防止超出底部
+  if(top+150>window.innerHeight)top=rect.top-150;
+  tooltip.style.top=top+'px';
+  tooltip.style.left=Math.max(10,left)+'px';
+  tooltip.classList.add('show');
+  // 先尝试本地词典
+  const local=getLocalWordDef(word);
+  if(local){
+    renderWordTooltip(word,local.phonetic||'',local.def,'local');
+    return;
+  }
+  // 调用 Free Dictionary API
+  fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(word))
+    .then(r=>{if(!r.ok)throw new Error('not found');return r.json();})
+    .then(data=>{
+      const entry=data[0]||{};
+      const phonetic=(entry.phonetic)||(entry.phonetics&&entry.phonetics.find(p=>p.text)?entry.phonetics.find(p=>p.text).text:'');
+      const meanings=(entry.meanings||[]).slice(0,3);
+      let defText='';
+      meanings.forEach(m=>{
+        const pos=m.partOfSpeech||'';
+        const defs=(m.definitions||[]).slice(0,2).map(d=>d.definition);
+        if(defs.length)defText+=(pos?'('+pos+') ':'')+defs.join('; ')+' ';
+      });
+      if(!defText)defText='未找到释义';
+      renderWordTooltip(word,phonetic,defText,'api');
+    })
+    .catch(()=>{
+      renderWordTooltip(word,'','未能查到该单词的释义<br><span style="font-size:11px;color:var(--text-muted)">可能是人名、地名或专有名词</span>','fail');
+    });
+}
+function renderWordTooltip(word,phonetic,def,source){
+  if(!wordTooltipEl)return;
+  let html='<span class="wt-close" onclick="hideWordTooltip()">×</span>';
+  html+='<div class="wt-word">'+word+'<span class="wt-speak" onclick="ttsSpeak(\''+word+'\',null);event.stopPropagation();">🔊</span></div>';
+  if(phonetic)html+='<div class="wt-phonetic">'+phonetic+'</div>';
+  html+='<div class="wt-def">'+def+'</div>';
+  wordTooltipEl.innerHTML=html;
+  // 点击外部关闭
+  setTimeout(()=>{
+    document.addEventListener('click',hideWordTooltipOnce,{once:true});
+  },50);
+}
+function hideWordTooltipOnce(e){
+  if(wordTooltipEl&&!wordTooltipEl.contains(e.target))hideWordTooltip();
+}
+function hideWordTooltip(){
+  if(wordTooltipEl){wordTooltipEl.remove();wordTooltipEl=null;}
+}
+// 本地常用词汇表（备选，API 不可用时使用）
+function getLocalWordDef(word){
+  const dict={
+    'the':'art. 这/那个（定冠词）','a':'art. 一个','an':'art. 一个','is':'v. 是','are':'v. 是','was':'v. 是（过去时）','were':'v. 是（过去时）',
+    'and':'conj. 和','or':'conj. 或','but':'conj. 但是','not':'adv. 不','no':'adv. 不','yes':'adv. 是',
+    'in':'prep. 在...里','on':'prep. 在...上','at':'prep. 在','to':'prep. 到','for':'prep. 为了','of':'prep. ...的','with':'prep. 和...一起',
+    'have':'v. 有/已经','has':'v. 有/已经','had':'v. 有（过去时）','do':'v. 做','does':'v. 做（第三人称）','did':'v. 做（过去时）',
+    'can':'v. 能/可以','could':'v. 能（过去时）','will':'v. 将会','would':'v. 将会（过去时）','should':'v. 应该','must':'v. 必须',
+    'people':'n. 人们','world':'n. 世界','life':'n. 生活','time':'n. 时间','year':'n. 年','day':'n. 天','man':'n. 男人','woman':'n. 女人',
+    'good':'adj. 好的','bad':'adj. 坏的','new':'adj. 新的','old':'adj. 旧的','young':'adj. 年轻的','great':'adj. 伟大的',
+    'learn':'v. 学习','study':'v. 学习','work':'v. 工作作','live':'v. 生活','make':'v. 制作/使得','know':'v. 知道',
+    'think':'v. 思考','want':'v. 想要','need':'v. 需要','help':'v. 帮助','use':'v. 使用','get':'v. 获得','go':'v. 去','come':'v. 来',
+    'education':'n. 教育','health':'n. 健康','technology':'n. 技术','society':'n. 社会','culture':'n. 文化','environment':'n. 环境'
+  };
+  return dict[word]?{def:dict[word],phonetic:''}:null;
+}
 </script>
 
 
