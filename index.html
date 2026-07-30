@@ -1897,25 +1897,35 @@ function showWordTooltip(el,word){
     renderWordTooltip(word,local.phonetic||'',local.def,'local');
     return;
   }
-  // 调用 Free Dictionary API
+  // 同时请求：中文翻译（MyMemory）+ 英文音标（Dictionary API）
+  let chnResult='',phoneticResult='';
+  let doneCount=0,totalCount=2;
+  function checkDone(){
+    doneCount++;
+    if(doneCount>=totalCount){
+      const defText=chnResult||'未能查到中文翻译';
+      renderWordTooltip(word,phoneticResult,defText,'api');
+    }
+  }
+  // 1. 中文翻译
+  fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(word)+'&langpair=en|zh-CN')
+    .then(r=>r.json())
+    .then(data=>{
+      if(data&&data.responseData&&data.responseData.translatedText){
+        chnResult=data.responseData.translatedText;
+      }
+    })
+    .catch(()=>{})
+    .finally(()=>checkDone());
+  // 2. 英文音标
   fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(word))
-    .then(r=>{if(!r.ok)throw new Error('not found');return r.json();})
+    .then(r=>{if(!r.ok)throw new Error('nf');return r.json();})
     .then(data=>{
       const entry=data[0]||{};
-      const phonetic=(entry.phonetic)||(entry.phonetics&&entry.phonetics.find(p=>p.text)?entry.phonetics.find(p=>p.text).text:'');
-      const meanings=(entry.meanings||[]).slice(0,3);
-      let defText='';
-      meanings.forEach(m=>{
-        const pos=m.partOfSpeech||'';
-        const defs=(m.definitions||[]).slice(0,2).map(d=>d.definition);
-        if(defs.length)defText+=(pos?'('+pos+') ':'')+defs.join('; ')+' ';
-      });
-      if(!defText)defText='未找到释义';
-      renderWordTooltip(word,phonetic,defText,'api');
+      phoneticResult=(entry.phonetic)||(entry.phonetics&&entry.phonetics.find(p=>p.text)?entry.phonetics.find(p=>p.text).text:'');
     })
-    .catch(()=>{
-      renderWordTooltip(word,'','未能查到该单词的释义<br><span style="font-size:11px;color:var(--text-muted)">可能是人名、地名或专有名词</span>','fail');
-    });
+    .catch(()=>{})
+    .finally(()=>checkDone());
 }
 function renderWordTooltip(word,phonetic,def,source){
   if(!wordTooltipEl)return;
