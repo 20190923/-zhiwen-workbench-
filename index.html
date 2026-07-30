@@ -1771,11 +1771,11 @@ function renderDailyEssay(){
   document.getElementById('dailyEssayBadge').textContent='Day '+(dailyEssayIdx+1)+' / '+DAILY_ESSAYS.length;
   document.getElementById('dailyEssayTopic').textContent='主题：'+e.topic;
   dailySentences=splitSentences(e.eng);
-  // 每个句子包裹为可点击 span（TTS），内部单词也可点击翻译
+  // 每个句子：长按显示句子翻译，内部单词短按显示单词翻译
   document.getElementById('dailyEssayEng').innerHTML=dailySentences.map((s,i)=>{
-    // 将句子中的单词逐个包裹为可点击 span，标点保持不变
+    // 将句子中的单词逐个包裹为可点击 span
     const wrapped=s.replace(/([a-zA-Z][a-zA-Z'-]*)/g,'<span class="essay-word" onclick="translateWord(this,\'$1\',event)">$1</span>');
-    return '<span class="essay-sentence" data-idx="'+i+'" onclick="ttsPlaySingle('+i+')">'+wrapped+'</span> ';
+    return '<span class="essay-sentence" data-idx="'+i+'" data-sentence="'+s.replace(/"/g,'&quot;')+'" onmousedown="sentencePressStart('+i+',this,event)" onmouseup="sentencePressEnd('+i+',event)" ontouchstart="sentencePressStart('+i+',this,event)" ontouchend="sentencePressEnd('+i+',event)" onclick="return false">'+wrapped+'</span> ';
   }).join('');
   document.getElementById('dailyEssayChn').textContent=e.chn;
   const st=document.getElementById('shadowTotal');if(st)st.textContent='共 '+dailySentences.length+' 句';
@@ -1862,6 +1862,60 @@ function ttsShadowExit(){
   setTtsStatus('已退出跟读模式');
 }
 function setTtsStatus(msg){const el=document.getElementById('ttsStatus');if(el)el.textContent=msg;}
+// ===== 句子长按翻译 =====
+let sentencePressTimer=null,sentencePressStartT=0,sentencePressed=false;
+function sentencePressStart(idx,el,e){
+  sentencePressed=false;
+  sentencePressStartT=Date.now();
+  // 长按 500ms 后标记为长按
+  sentencePressTimer=setTimeout(()=>{
+    sentencePressed=true;
+    translateSentence(idx,el);
+  },500);
+}
+function sentencePressEnd(idx,e){
+  if(sentencePressTimer){clearTimeout(sentencePressTimer);sentencePressTimer=null;}
+  // 如果不是长按，则播放句子 TTS
+  if(!sentencePressed){
+    ttsPlaySingle(idx);
+  }
+  sentencePressed=false;
+}
+function translateSentence(idx,el){
+  hideWordTooltip();
+  const sentence=dailySentences[idx];
+  const chnFull=DAILY_ESSAYS[dailyEssayIdx].chn;
+  // 显示句子翻译弹窗
+  const tooltip=document.createElement('div');
+  tooltip.className='word-tooltip';
+  tooltip.innerHTML='<div class="wt-loading">🔍 翻译中...</div>';
+  document.body.appendChild(tooltip);
+  wordTooltipEl=tooltip;
+  const rect=el.getBoundingClientRect();
+  let top=rect.bottom+6;
+  let left=rect.left;
+  const tw=300;
+  if(left+tw>window.innerWidth)left=window.innerWidth-tw-10;
+  if(top+200>window.innerHeight)top=rect.top-200;
+  tooltip.style.top=top+'px';
+  tooltip.style.left=Math.max(10,left)+'px';
+  tooltip.classList.add('show');
+  // 调用翻译 API
+  fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(sentence)+'&langpair=en|zh-CN')
+    .then(r=>r.json())
+    .then(data=>{
+      const tr=(data&&data.responseData&&data.responseData.translatedText)||'未能翻译';
+      let html='<span class="wt-close" onclick="hideWordTooltip()">×</span>';
+      html+='<div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">📄 整句翻译（长按触发）</div>';
+      html+='<div style="font-size:13px;font-family:Georgia,serif;color:var(--text-title);line-height:1.5;margin-bottom:6px">'+sentence+'</div>';
+      html+='<div style="font-size:13px;color:var(--text-section);line-height:1.6">'+tr+'</div>';
+      tooltip.innerHTML=html;
+      setTimeout(()=>{document.addEventListener('click',hideWordTooltipOnce,{once:true});},50);
+    })
+    .catch(()=>{
+      tooltip.innerHTML='<span class="wt-close" onclick="hideWordTooltip()">×</span><div style="font-size:12px;color:var(--text-muted)">翻译失败，请检查网络</div>';
+    });
+}
 // ===== 单词翻译功能 =====
 let wordTooltipEl=null;
 let wordTooltipTimer=null;
