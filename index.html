@@ -342,7 +342,7 @@ window.addEventListener('resize',function(){
 <div class="essay-meta">
 <span class="essay-badge" id="dailyEssayBadge">Day 1 / 30</span>
 <span class="essay-topic" id="dailyEssayTopic">主题：教育</span>
-<button class="essay-nav-btn" onclick="toggleEssayTranslation()">隐藏翻译</button>
+<button class="essay-nav-btn" onclick="toggleEssayTranslation(event)">隐藏翻译</button>
 </div>
 <div class="essay-section">
 <h4>📝 英文原文</h4>
@@ -1774,7 +1774,7 @@ function renderDailyEssay(){
   // 每个句子包裹为可点击 span（TTS），内部单词也可点击翻译
   document.getElementById('dailyEssayEng').innerHTML=dailySentences.map((s,i)=>{
     // 将句子中的单词逐个包裹为可点击 span，标点保持不变
-    const wrapped=s.replace(/([a-zA-Z][a-zA-Z'-]*)/g,'<span class="essay-word" onclick="event.stopPropagation();translateWord(this,\'$1\')">$1</span>');
+    const wrapped=s.replace(/([a-zA-Z][a-zA-Z'-]*)/g,'<span class="essay-word" onclick="translateWord(this,\'$1\',event)">$1</span>');
     return '<span class="essay-sentence" data-idx="'+i+'" onclick="ttsPlaySingle('+i+')">'+wrapped+'</span> ';
   }).join('');
   document.getElementById('dailyEssayChn').textContent=e.chn;
@@ -1786,10 +1786,10 @@ function changeDailyEssay(d){
   dailyEssayIdx=(dailyEssayIdx+d+DAILY_ESSAYS.length)%DAILY_ESSAYS.length;
   dailySentIdx=0;renderDailyEssay();
 }
-function toggleEssayTranslation(){
+function toggleEssayTranslation(e){
   dailyTranslationVisible=!dailyTranslationVisible;
   const sec=document.getElementById('dailyEssayChnSection');
-  const btn=event.target;
+  const btn=e?e.target:window.event.target;
   if(dailyTranslationVisible){sec.style.display='block';btn.textContent='隐藏翻译';}
   else{sec.style.display='none';btn.textContent='显示翻译';}
 }
@@ -1865,8 +1865,8 @@ function setTtsStatus(msg){const el=document.getElementById('ttsStatus');if(el)e
 // ===== 单词翻译功能 =====
 let wordTooltipEl=null;
 let wordTooltipTimer=null;
-function translateWord(el,word){
-  if(event)event.stopPropagation();
+function translateWord(el,word,e){
+  if(e)e.stopPropagation();
   // 移除标点
   word=word.replace(/[^a-zA-Z'-]/g,'').toLowerCase();
   if(!word||word.length<2)return;
@@ -1920,7 +1920,7 @@ function showWordTooltip(el,word){
 function renderWordTooltip(word,phonetic,def,source){
   if(!wordTooltipEl)return;
   let html='<span class="wt-close" onclick="hideWordTooltip()">×</span>';
-  html+='<div class="wt-word">'+word+'<span class="wt-speak" onclick="ttsSpeak(\''+word+'\',null);event.stopPropagation();">🔊</span></div>';
+  html+='<div class="wt-word">'+word+'<span class="wt-speak" onclick="ttsSpeak(\''+word+'\',null);">🔊</span></div>';
   if(phonetic)html+='<div class="wt-phonetic">'+phonetic+'</div>';
   html+='<div class="wt-def">'+def+'</div>';
   wordTooltipEl.innerHTML=html;
