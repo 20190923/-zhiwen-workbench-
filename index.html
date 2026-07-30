@@ -1,0 +1,1802 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>志雯工作台</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+<style>
+:root{--bg-page:#FEF7F9;--bg-sidebar:#FDF0F3;--bg-card:#FFFFFF;--bg-input:#FDF6F8;--border-color:#F8C8D6;--border-soft:#FBE3EA;--text-title:#2D1F2A;--text-section:#4A3B48;--text-body:#7A6B78;--text-muted:#B0A0AE;--accent:#F8C8D6;--accent-hover:#F0B4C6;--accent-light:#FDEEF2;--accent-deep:#E89AAB;--radius:14px;--card-gap:16px;--font-size-base:14px;--sidebar-width:230px}
+[data-fontsize="small"]{--font-size-base:12px}[data-fontsize="medium"]{--font-size-base:14px}[data-fontsize="large"]{--font-size-base:16px}[data-cardgap="compact"]{--card-gap:10px}[data-cardgap="normal"]{--card-gap:16px}[data-cardgap="loose"]{--card-gap:24px}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%}body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg-page);color:var(--text-body);font-size:var(--font-size-base);line-height:1.6;-webkit-font-smoothing:antialiased}button{font-family:inherit;cursor:pointer;border:none;background:none}input,textarea,select{font-family:inherit;font-size:inherit}::selection{background:var(--accent-light)}
+.app-container{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-width);background:var(--bg-sidebar);border-right:1px solid var(--border-soft);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .25s ease}
+.sidebar-inner{display:flex;flex-direction:column;height:100%}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border-soft);text-align:center}
+.sidebar-header .logo-face{font-size:28px;margin-bottom:4px}
+.sidebar-header h1{font-size:17px;color:var(--text-title);font-weight:700}
+.sidebar-header .subtitle{font-size:10px;color:var(--accent-deep);margin-top:4px;letter-spacing:1.5px}
+.nav-menu{flex:1;overflow-y:auto;padding:8px 0}
+.nav-item{display:flex;align-items:center;padding:11px 16px;font-size:13px;color:var(--text-body);cursor:pointer;transition:all .15s ease;border-left:3px solid transparent;gap:10px}
+.nav-item:hover{background:var(--accent-light);color:var(--text-section)}
+.nav-item.active{background:var(--accent-light);color:var(--accent-deep);font-weight:600;border-left-color:var(--accent-deep)}
+.nav-item .nav-icon{font-size:15px;width:20px;text-align:center}
+.nav-item .nav-num{font-size:10px;color:var(--text-muted);width:18px;text-align:right}
+.nav-item.active .nav-num{color:var(--accent-deep)}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border-soft);font-size:11px;color:var(--text-muted);text-align:center}
+.mobile-menu-btn{display:flex;position:fixed;top:12px;left:12px;z-index:9999;width:40px;height:40px;background:var(--bg-card);border:2px solid var(--accent-deep);border-radius:10px;align-items:center;justify-content:center;font-size:20px;color:var(--accent-deep);cursor:pointer;pointer-events:auto;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.12);z-index:99}
+.mobile-overlay.show{display:block}
+.main-content{flex:1;margin-left:var(--sidebar-width);padding:24px 28px;min-height:100vh}
+.page{display:none}.page.active{display:block}
+.page-header{margin-bottom:var(--card-gap);padding-bottom:12px;border-bottom:2px dashed var(--border-soft)}
+.page-header h2{font-size:18px;color:var(--text-title);font-weight:700}
+.page-header .page-desc{font-size:12px;color:var(--text-muted);margin-top:4px}
+.motivation-note{background:linear-gradient(135deg,#FFF8FA 0%,#FDF0F3 50%,#FEF7F9 100%);border:1px solid var(--border-color);border-radius:var(--radius);padding:14px 18px;margin-bottom:var(--card-gap);position:relative;box-shadow:0 2px 8px rgba(232,154,171,.08)}
+.motivation-note .note-text{font-size:14px;color:var(--text-section);line-height:1.8;font-style:italic}
+.motivation-note .note-author{text-align:right;font-size:11px;color:var(--text-muted);margin-top:6px}
+.card{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:18px;margin-bottom:var(--card-gap);box-shadow:0 1px 3px rgba(232,154,171,.06)}
+.card-title{font-size:15px;color:var(--text-section);font-weight:600;margin-bottom:12px;padding-bottom:8px;border-bottom:1px dashed var(--border-soft)}
+.card-title .auto-badge{font-size:10px;background:var(--accent);color:#fff;padding:1px 8px;border-radius:10px;font-weight:400;margin-left:6px}
+.input,.select,textarea.input{width:100%;padding:8px 10px;border:1px solid var(--border-color);border-radius:10px;background:var(--bg-input);color:var(--text-section);font-size:13px;transition:border-color .15s,box-shadow .15s}
+.input:focus,.select:focus,textarea.input:focus{outline:none;border-color:var(--accent-deep);background:#fff;box-shadow:0 0 0 3px var(--accent-light)}
+textarea.input{resize:vertical;min-height:80px;line-height:1.5}
+label.field-label{display:block;font-size:12px;color:var(--text-muted);margin-bottom:4px}
+.btn{padding:7px 16px;border-radius:10px;font-size:13px;transition:all .15s;border:1px solid transparent;font-weight:500}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-hover)}
+.btn-outline{background:#fff;color:var(--accent-deep);border-color:var(--accent)}.btn-outline:hover{background:var(--accent-light)}
+.btn-danger{background:var(--accent-light);color:var(--accent-deep);border:1px solid var(--border-color);font-size:11px;padding:3px 10px}.btn-danger:hover{background:var(--accent);color:#fff}
+.btn-sm{padding:4px 12px;font-size:12px}
+table.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{text-align:left;padding:8px 10px;background:var(--accent-light);color:var(--text-section);font-weight:600;font-size:12px;border-bottom:1px solid var(--border-color)}
+.data-table td{padding:8px 10px;border-bottom:1px solid var(--border-soft);color:var(--text-section);vertical-align:top}
+.data-table tr:hover td{background:var(--bg-input)}
+.stat-number{font-size:24px;font-weight:700;color:var(--text-title)}
+.stat-label{font-size:11px;color:var(--text-muted);margin-top:2px}
+.stat-row{display:flex;gap:24px;flex-wrap:wrap}.stat-row>div{min-width:80px}
+.task-check{display:flex;align-items:center;gap:8px;padding:8px 0;cursor:pointer;font-size:13px;color:var(--text-section)}
+.task-check input[type="checkbox"]{width:17px;height:17px;accent-color:var(--accent-deep);cursor:pointer}
+.task-check.done{color:var(--text-muted);text-decoration:line-through}
+.dashboard-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--card-gap)}
+.dash-card{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px;box-shadow:0 1px 3px rgba(232,154,171,.06)}
+.dash-card h3{font-size:14px;color:var(--text-section);font-weight:600;margin-bottom:12px;padding-bottom:8px;border-bottom:1px dashed var(--border-soft)}
+.form-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.form-group{display:flex;flex-direction:column;flex:1;min-width:120px}
+.form-group.fixed-sm{flex:0 0 100px}.form-group.fixed-md{flex:0 0 160px}
+.tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px}
+.tag-income{background:var(--accent-light);color:var(--accent-deep)}
+.tag-expense{background:var(--accent-light);color:var(--accent-deep)}
+.empty-state{text-align:center;padding:24px;color:var(--text-muted);font-size:12px}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--accent-hover)}
+.collapse-toggle{cursor:pointer;font-size:12px;color:var(--accent-deep);user-select:none;margin-top:8px}
+.collapse-content{display:none;margin-top:8px;padding:10px;background:var(--bg-input);border-radius:10px;font-size:13px;color:var(--text-section)}
+.collapse-content.show{display:block}
+.subsection-title{font-size:13px;color:var(--text-section);font-weight:600;margin:14px 0 8px;padding-left:10px;border-left:3px solid var(--accent)}
+.big-textarea{width:100%;min-height:200px;border:1px solid var(--border-color);border-radius:var(--radius);padding:12px;background:var(--bg-input);font-size:13px;line-height:1.7;resize:vertical;color:var(--text-section)}
+.big-textarea:focus{outline:none;border-color:var(--accent-deep);background:#fff;box-shadow:0 0 0 3px var(--accent-light)}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px dashed var(--border-soft)}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-size:13px;color:var(--text-section)}
+.setting-desc{font-size:11px;color:var(--text-muted);margin-top:2px}
+.toggle-switch{position:relative;width:40px;height:22px;background:#D4B5C0;border-radius:11px;cursor:pointer;transition:background .2s}
+.toggle-switch.on{background:var(--accent)}
+.toggle-switch::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle-switch.on::after{transform:translateX(18px)}
+.btn-group{display:flex;border:1px solid var(--border-color);border-radius:10px;overflow:hidden}
+.btn-group button{padding:4px 12px;font-size:12px;background:#fff;color:var(--text-body);border:none;border-right:1px solid var(--border-soft)}
+.btn-group button:last-child{border-right:none}.btn-group button.active{background:var(--accent);color:#fff}
+.section-divider{border:none;border-top:1px dashed var(--border-soft);margin:var(--card-gap) 0}
+.deco-row{text-align:center;font-size:16px;color:var(--accent);opacity:.4;letter-spacing:8px;margin:8px 0}
+.word-scroll{max-height:400px;overflow-y:auto;border:1px dashed var(--border-color);border-radius:10px;padding:10px;background:var(--bg-input)}
+.word-item{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 8px;border-bottom:1px dashed var(--border-soft);font-size:13px;gap:8px}
+.word-item:last-child{border-bottom:none}
+.word-item .word-left{min-width:120px;color:var(--text-section);font-weight:600}
+.word-item .word-mid{flex:1;color:var(--text-body)}
+.word-item .word-right{min-width:40px;text-align:center}
+.chapter-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chapter-nav button{padding:4px 10px;border-radius:10px;font-size:11px;border:1px solid var(--border-color);background:#fff;color:var(--text-body)}
+.chapter-nav button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.formula-box{background:var(--bg-input);border:1px solid var(--border-soft);border-radius:10px;padding:12px;font-size:13px;line-height:2;font-family:"Times New Roman",serif;color:var(--text-section);margin:8px 0}
+.knowledge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.knowledge-item{background:var(--bg-input);border:1px solid var(--border-soft);border-radius:10px;padding:10px;font-size:12px;line-height:1.7}
+.knowledge-item .k-title{color:var(--accent-deep);font-weight:600;font-size:13px;margin-bottom:4px}
+.budget-bar{height:8px;background:var(--border-soft);border-radius:4px;margin-top:6px;overflow:hidden}
+.budget-bar-fill{height:100%;border-radius:4px;transition:width .3s}
+.budget-bar-fill.normal{background:var(--accent)}
+.budget-bar-fill.warning{background:var(--accent-deep)}
+.budget-bar-fill.over{background:#D47080}
+.budget-alert{font-size:11px;margin-top:4px;font-weight:600}
+.budget-alert.warning{color:var(--accent-deep)}.budget-alert.over{color:#D47080}
+.floating-formula-btn{position:fixed;bottom:24px;right:24px;width:48px;height:48px;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;z-index:50;box-shadow:0 2px 12px rgba(232,154,171,.3);cursor:pointer;transition:all .2s}
+.floating-formula-btn:hover{background:var(--accent-hover);transform:scale(1.1)}
+.formula-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:300;justify-content:center;align-items:center}
+.formula-modal.show{display:flex}
+.formula-modal-content{background:#fff;border-radius:var(--radius);padding:20px;max-width:600px;max-height:80vh;overflow-y:auto;width:90%}
+.month-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
+.month-tab{padding:4px 10px;border-radius:10px;font-size:11px;border:1px solid var(--border-color);background:#fff;color:var(--text-body);cursor:pointer}
+.month-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.shizheng-item{padding:8px 10px;border-bottom:1px dashed var(--border-soft);font-size:12px;line-height:1.7}
+.shizheng-item:last-child{border-bottom:none}
+.shizheng-item .sz-num{color:var(--accent-deep);font-weight:600;margin-right:4px}
+.quiz-box{border:1px solid var(--border-color);border-radius:10px;padding:12px;margin:8px 0;background:var(--bg-input)}
+.quiz-q{font-weight:600;margin-bottom:8px;color:var(--text-section)}
+.quiz-opts{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.quiz-opts label{cursor:pointer;font-size:13px;color:var(--text-body)}
+.quiz-result{font-size:12px;padding:4px 8px;border-radius:6px;display:none}
+.quiz-result.correct{display:block;background:var(--accent-light);color:var(--accent-deep)}
+.quiz-result.wrong{display:block;background:var(--danger-light);color:#D47080}
+.search-box{display:flex;gap:8px;margin-bottom:12px}.search-box input{flex:1}
+.diary-template-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.diary-tpl-card{background:var(--bg-input);border:1px solid var(--border-soft);border-radius:10px;padding:10px;font-size:12px;cursor:pointer;transition:all .15s}
+.diary-tpl-card:hover{border-color:var(--accent);background:var(--accent-light)}
+.diary-tpl-card .tpl-title{font-weight:600;color:var(--text-section);margin-bottom:4px}
+.diary-tpl-card .tpl-desc{color:var(--text-muted);font-size:11px}
+.word-review-card{display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg-input);border:1px solid var(--border-soft);border-radius:10px;margin-bottom:8px}
+.word-review-card .wrc-word{font-size:18px;font-weight:700;color:var(--text-title)}
+.word-review-card .wrc-hint{font-size:11px;color:var(--text-muted)}
+.essay-tpl-box{background:var(--bg-input);border:1px solid var(--border-soft);border-radius:10px;padding:14px;margin-bottom:12px}
+.essay-tpl-box h4{color:var(--accent-deep);font-size:14px;margin-bottom:6px}
+.essay-tpl-box pre{white-space:pre-wrap;font-size:12px;line-height:1.8;color:var(--text-section)}
+.wrong-q-item{display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px dashed var(--border-soft)}
+.wrong-q-item:last-child{border-bottom:none}
+.diff-tag{padding:1px 6px;border-radius:8px;font-size:10px;font-weight:600}
+.diff-tag.basic{background:var(--accent-light);color:var(--accent-deep)}
+.diff-tag.advanced{background:var(--danger-light);color:#D47080}
+/* ===== 政治打卡日历样式 ===== */
+.pol-calendar-toolbar{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.pol-calendar-title{font-size:15px;font-weight:600;color:var(--text-section);min-width:110px;text-align:center}
+.pol-cal-nav-btn{padding:4px 10px;border:1px solid var(--border-color);border-radius:8px;background:#fff;color:var(--text-body);font-size:12px;cursor:pointer}
+.pol-cal-nav-btn:hover{background:var(--accent-light);border-color:var(--accent)}
+.pol-cal-today-btn{padding:4px 10px;border:1px solid var(--accent);border-radius:8px;background:var(--accent-light);color:var(--accent-deep);font-size:12px;cursor:pointer}
+.pol-cal-stats{display:flex;justify-content:center;gap:16px;margin-bottom:10px;font-size:12px;color:var(--text-muted)}
+.pol-cal-stats strong{color:var(--accent-deep);font-size:15px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;background:var(--border-soft);border:1px solid var(--border-soft);border-radius:10px;overflow:hidden}
+.calendar-day{min-height:42px;padding:3px 4px;font-size:12px;color:var(--text-section);background:var(--bg-card);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;position:relative}
+.calendar-day.header{background:var(--accent-light);color:var(--accent-deep);font-weight:600;cursor:default;min-height:28px;font-size:11px}
+.calendar-day.header.weekend{color:#D47080}
+.calendar-day:not(.header):hover{background:var(--accent-light)}
+.calendar-day.empty{background:var(--bg-input);cursor:default}
+.calendar-day.checked{background:var(--accent-light);color:var(--accent-deep);font-weight:700}
+.calendar-day.checked::after{content:'✓';position:absolute;bottom:1px;font-size:11px;color:var(--accent-deep)}
+.calendar-day.today{border:2px solid var(--accent-deep)}
+.calendar-day.weekend{color:#D47080}
+.calendar-day.weekend.header{color:#D47080}
+/* ===== 学位英语听力短文样式 ===== */
+.essay-toolbar{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.essay-toolbar .essay-title{font-size:15px;font-weight:600;color:var(--text-section);min-width:120px;text-align:center}
+.essay-nav-btn{padding:4px 12px;border:1px solid var(--border-color);border-radius:8px;background:#fff;color:var(--text-body);font-size:12px;cursor:pointer}
+.essay-nav-btn:hover{background:var(--accent-light);border-color:var(--accent)}
+.essay-meta{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.essay-badge{background:var(--accent);color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600}
+.essay-topic{font-size:12px;color:var(--text-muted)}
+.essay-section{margin-bottom:12px}
+.essay-section h4{font-size:13px;color:var(--accent-deep);margin-bottom:6px;padding-bottom:4px;border-bottom:1px dashed var(--border-soft)}
+.essay-eng-text{font-family:Georgia,"Times New Roman",serif;font-size:14px;line-height:1.8;color:var(--text-section)}
+.essay-chn-text{font-size:13px;line-height:1.7;color:var(--text-body)}
+.essay-sentence{cursor:pointer;border-radius:3px;padding:1px 2px;transition:background .2s}
+.essay-sentence:hover{background:var(--accent-light)}
+.essay-sentence.highlight{background:var(--accent);color:#fff}
+.tts-controls{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.tts-btn{padding:5px 12px;border:1px solid var(--border-color);border-radius:8px;background:var(--accent-light);color:var(--accent-deep);font-size:12px;cursor:pointer;transition:all .15s}
+.tts-btn:hover{background:var(--accent);color:#fff}
+.tts-btn.tts-highlight{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tts-btn.tts-danger{background:#fff;color:#D47080;border-color:#D47080}
+.tts-btn.tts-danger:hover{background:#D47080;color:#fff}
+.tts-speed-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted);margin-bottom:6px}
+.tts-speed-row input[type=range]{flex:1;max-width:160px;cursor:pointer;accent-color:var(--accent-deep)}
+.tts-speed-row .rate-label{font-weight:600;color:var(--accent-deep);min-width:32px}
+.tts-status{font-size:11px;color:var(--text-muted);padding:6px 10px;background:var(--bg-input);border-radius:8px;border-left:3px solid var(--accent)}
+.shadow-panel{display:none;background:var(--accent-light);border:2px solid var(--accent);border-radius:10px;padding:12px;margin-top:8px}
+.shadow-panel.show{display:block}
+.shadow-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+.shadow-progress{font-size:12px;color:var(--text-muted)}
+.shadow-actions{display:flex;gap:6px;flex-wrap:wrap}
+.mobile-overlay.show{display:block}@media(min-width:769px){.sidebar.open{transform:translateX(calc(var(--sidebar-width) * -1))}.sidebar.open~.main-content{margin-left:0}}@media(max-width:768px){.sidebar{transform:translateX(-100%);box-shadow:2px 0 12px rgba(232,154,171,.12)}.sidebar.open{transform:translateX(0)}.main-content{margin-left:0;padding:56px 16px 24px}.dashboard-grid{grid-template-columns:1fr}.form-row{flex-direction:column;gap:8px}.form-group{min-width:100%}.stat-row{gap:16px}.data-table{font-size:12px}.data-table th,.data-table td{padding:6px 8px}.floating-formula-btn{bottom:16px;right:16px;width:40px;height:40px;font-size:16px}}
+</style>
+</head>
+<body data-fontsize="medium" data-cardgap="normal">
+<!-- 保存到手机按钮 -->
+<div id="saveBanner" style="position:fixed;top:0;left:0;right:0;z-index:9998;background:linear-gradient(135deg,#F8C8D6,#E89AAB);color:#fff;text-align:center;padding:10px 16px;font-size:14px;font-weight:600;box-shadow:0 2px 8px rgba(232,154,171,.3);display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">
+<span>📌 想永久保存到手机？</span>
+<button onclick="saveToLocal()" style="background:#fff;color:#E89AAB;border:none;padding:6px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">点这里保存</button>
+<button onclick="document.getElementById('saveBanner').style.display='none'" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer">以后再说</button>
+</div>
+<script>
+function saveToLocal(){
+  var html=document.documentElement.outerHTML;
+  var blob=new Blob([html],{type:'text/html'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='zhiwen_workbench.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  alert('文件正在下载！\n\n下载完成后：\n1. 打开iPhone「文件」App\n2. 点「下载项」\n3. 找到 zhiwen_workbench.html\n4. 长按它 → 选「存储到文件」\n5. 存到「我的iPhone」\n6. 以后从文件App点开就能用，永不失效！');
+}
+</script>
+<button class="mobile-menu-btn" onclick="toggleSidebar()" style="top:52px">☰</button>
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
+<!-- 手机端底部导航 -->
+<nav id="bottomNav" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9997;background:#fff;border-top:1px solid var(--border-color);padding:6px 4px;box-shadow:0 -2px 8px rgba(232,154,171,.15);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch">
+<a onclick="switchPage('dashboard')" style="display:inline-block;text-align:center;padding:6px 10px;font-size:11px;color:var(--text-body);text-decoration:none;cursor:pointer;min-width:54px"><div style="font-size:18px">📊</div>首页</a>
+<a onclick="switchPage('accounting')" style="display:inline-block;text-align:center;padding:6px 10px;font-size:11px;color:var(--text-body);text-decoration:none;cursor:pointer;min-width:54px"><div style="font-size:18px">💰</div>记账</a>
+<a onclick="switchPage('english')" style="display:inline-block;text-align:center;padding:6px 10px;font-size:11px;color:var(--text-body);text-decoration:none;cursor:pointer;min-width:54px"><div style="font-size:18px">📖</div>英语</a>
+<a onclick="switchPage('math')" style="display:inline-block;text-align:center;padding:6px 10px;font-size:11px;color:var(--text-body);text-decoration:none;cursor:pointer;min-width:54px"><div style="font-size:18px">📐</div>高数</a>
+<a onclick="switchPage('politics')" style="display:inline-block;text-align:center;padding:6px 10px;font-size:11px;color:var(--text-body);text-decoration:none;cursor:pointer;min-width:54px"><div style="font-size:18px">📑</div>政治</a>
+<a onclick="switchPage('tasks')" style="display:inline-block;text-align:center;padding:6px 10px;font-size:11px;color:var(--text-body);text-decoration:none;cursor:pointer;min-width:54px"><div style="font-size:18px">✅</div>任务</a>
+<a onclick="switchPage('diary')" style="display:inline-block;text-align:center;padding:6px 10px;font-size:11px;color:var(--text-body);text-decoration:none;cursor:pointer;min-width:54px"><div style="font-size:18px">📔</div>日记</a>
+<a onclick="switchPage('settings')" style="display:inline-block;text-align:center;padding:6px 10px;font-size:11px;color:var(--text-body);text-decoration:none;cursor:pointer;min-width:54px"><div style="font-size:18px">⚙️</div>设置</a>
+</nav>
+<script>
+// 手机端检测 & 显示底部导航
+if(window.innerWidth<=768){
+  document.getElementById('bottomNav').style.display='block';
+  // 主内容底部加内边距，避免被底部导航遮挡
+  var mc=document.querySelector('.main-content');
+  if(mc)mc.style.paddingBottom='70px';
+}
+window.addEventListener('resize',function(){
+  if(window.innerWidth<=768){
+    document.getElementById('bottomNav').style.display='block';
+  } else {
+    document.getElementById('bottomNav').style.display='none';
+  }
+});
+</script>
+<div class="app-container">
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-inner">
+<div class="sidebar-header"><div class="logo-face">🌸</div><h1>志雯工作台</h1><div class="subtitle">规划→执行→记录→复盘</div></div>
+<nav class="nav-menu" id="navMenu">
+<a class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')"><span class="nav-icon">📊</span><span style="flex:1">首页总仪表盘</span><span class="nav-num">01</span></a>
+<a class="nav-item" data-page="accounting" onclick="switchPage('accounting')"><span class="nav-icon">💰</span><span style="flex:1">收支记账账本</span><span class="nav-num">02</span></a>
+<a class="nav-item" data-page="english" onclick="switchPage('english')"><span class="nav-icon">📖</span><span style="flex:1">学位英语专项学习</span><span class="nav-num">03</span></a>
+<a class="nav-item" data-page="math" onclick="switchPage('math')"><span class="nav-icon">📐</span><span style="flex:1">高数二备考</span><span class="nav-num">04</span></a>
+<a class="nav-item" data-page="politics" onclick="switchPage('politics')"><span class="nav-icon">📑</span><span style="flex:1">政治备考</span><span class="nav-num">05</span></a>
+<a class="nav-item" data-page="tasks" onclick="switchPage('tasks')"><span class="nav-icon">✅</span><span style="flex:1">每日任务打卡</span><span class="nav-num">06</span></a>
+<a class="nav-item" data-page="diary" onclick="switchPage('diary')"><span class="nav-icon">📔</span><span style="flex:1">日记&amp;总结复盘</span><span class="nav-num">07</span></a>
+<a class="nav-item" data-page="settings" onclick="switchPage('settings')"><span class="nav-icon">⚙️</span><span style="flex:1">系统基础设置</span><span class="nav-num">08</span></a>
+</nav>
+<div class="sidebar-footer"><div class="deco">☁️ 📚 ✏️</div><div>本地保存 · 刷新不丢失</div></div>
+</div>
+</aside>
+<main class="main-content">
+
+<!-- ===== PAGE 1: 仪表盘 ===== -->
+<div class="page active" id="page-dashboard">
+<div class="page-header"><h2>📊 首页总仪表盘</h2><div class="page-desc">每日数据总览，掌握学习与财务动态</div></div>
+<div class="motivation-note"><div class="note-text">成功的路上没有人会叫你起床，也没有人为你买单，你需要自我管理、自我约束、自我突破。</div><div class="note-author">—— 致奋斗的你 🌸</div></div>
+<div class="deco-row">☁️ 🌸 ☁️</div>
+<div class="dashboard-grid">
+<div class="dash-card"><h3>💰 财务概览</h3>
+<div class="stat-row"><div><div class="stat-number" id="dashTodayExpense">¥0.00</div><div class="stat-label">今日花销</div></div><div><div class="stat-number" id="dashMonthIncome">¥0.00</div><div class="stat-label">本月收入</div></div></div>
+<div class="stat-row" style="margin-top:12px"><div><div class="stat-number" id="dashMonthExpense">¥0.00</div><div class="stat-label">本月支出</div></div><div><div class="stat-number" id="dashMonthBalance">¥0.00</div><div class="stat-label">月度结余</div></div></div>
+<div class="budget-bar" style="margin-top:12px"><div class="budget-bar-fill normal" id="dashBudgetBar" style="width:0%"></div></div><div class="budget-alert " id="dashBudgetAlert">预算使用 0%</div></div>
+<div class="dash-card"><h3>📖 英语学习进度</h3>
+<div class="stat-row"><div><div class="stat-number" id="dashWordStreak">0</div><div class="stat-label">连续背词天数</div></div><div><div class="stat-number" id="dashWordTotal">0</div><div class="stat-label">单词累计量</div></div></div>
+<div class="stat-row" style="margin-top:12px"><div><div class="stat-number" id="dashReviewCount">0</div><div class="stat-label">待复习单词</div></div><div><div class="stat-number" id="dashEssayCount">0</div><div class="stat-label">短文打卡</div></div></div></div>
+<div class="dash-card"><h3>📐 成考备考进度</h3>
+<div class="stat-row"><div><div class="stat-number" id="dashMathTotal">0</div><div class="stat-label">高数刷题总量</div></div><div><div class="stat-number" id="dashMathWrong">0</div><div class="stat-label">错题数量</div></div></div>
+<div style="margin-top:12px"><div class="stat-number" id="dashPolStreak">0</div><div class="stat-label">政治连续背诵天数</div></div></div>
+<div class="dash-card"><h3>✅ 今日待办快捷勾选</h3><div id="dashQuickTasks"><div class="empty-state">暂无任务，去任务页面添加吧~</div></div></div>
+</div></div>
+
+<!-- ===== PAGE 2: 记账 ===== -->
+<div class="page" id="page-accounting">
+<div class="page-header"><h2>💰 收支记账账本</h2><div class="page-desc">记录每一笔收支，做好月度预算管理</div></div>
+<div class="card"><div class="card-title">📝 添加账单</div>
+<div class="form-row">
+<div class="form-group fixed-sm"><label class="field-label">类型</label><select class="select" id="billType"><option value="expense">支出</option><option value="income">收入</option></select></div>
+<div class="form-group fixed-sm"><label class="field-label">金额 ¥</label><input class="input" type="number" id="billAmount" placeholder="0.00" step="0.01"></div>
+<div class="form-group"><label class="field-label">分类</label><select class="select" id="billCategory"><option>餐饮</option><option>通勤</option><option>房租</option><option>服饰</option><option>美妆</option><option>日用品</option><option>学习耗材</option><option>医疗</option><option>社交娱乐</option><option>工资</option><option>兼职</option><option>理财</option><option>其他</option></select></div>
+<div class="form-group fixed-sm"><label class="field-label">日期</label><input class="input" type="date" id="billDate"></div>
+<div class="form-group"><label class="field-label">备注</label><input class="input" id="billNote" placeholder="可选"></div>
+<div class="form-group fixed-sm" style="justify-content:flex-end"><button class="btn btn-primary" onclick="addBill()">+ 添加</button></div>
+</div></div>
+<div class="card"><div class="card-title">📊 月度预算</div>
+<div class="form-row">
+<div class="form-group fixed-md"><label class="field-label">月度预算 ¥</label><input class="input" type="number" id="monthlyBudget" placeholder="设置预算" onchange="saveBudget()"></div>
+<div class="form-group"><div id="budgetStatus" style="padding-top:20px"></div></div>
+</div></div>
+<div class="card"><div class="card-title">📋 账单列表 <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="exportBills()">导出文本</button></div>
+<table class="data-table"><thead><tr><th>日期</th><th>类型</th><th>分类</th><th>金额</th><th>备注</th><th>操作</th></tr></thead><tbody id="billTableBody"></tbody></table></div>
+</div>
+
+<!-- ===== PAGE 3: 英语 ===== -->
+<div class="page" id="page-english">
+<div class="page-header"><h2>📖 学位英语专项学习</h2><div class="page-desc">词汇积累 · 作文模板 · 遗忘复习 · 听力口语</div></div>
+<div class="card"><div class="card-title">🔤 词汇学习 <span class="auto-badge">内置词库</span></div>
+<div class="form-row" style="margin-bottom:12px"><div class="form-group fixed-sm"><label class="field-label">排序</label><select class="select" onchange="renderWords()" id="wordSort"><option value="freq">按频率</option><option value="alpha">按字母</option><option value="random">随机</option></select></div><div class="form-group fixed-sm"><label class="field-label">搜索</label><input class="input" id="wordSearch" placeholder="输入单词..." oninput="renderWords()"></div><div style="display:flex;align-items:flex-end;gap:8px"><button class="btn btn-outline btn-sm" onclick="exportWords()">导出单词</button><button class="btn btn-outline btn-sm" onclick="startWordReview()">遗忘复习</button></div></div>
+<div class="word-scroll" id="wordList"><div class="word-item"><div class="word-left">abandon <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">放弃，抛弃<br><span style="font-size:11px;color:var(--text-muted)">abandon oneself to 沉溺于</span><br><span style="font-size:11px">He abandoned his plan to travel.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('abandon')">标记已学</button></div></div><div class="word-item"><div class="word-left">ability <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">能力，才能<br><span style="font-size:11px;color:var(--text-muted)">to the best of one's ability 尽其所能</span><br><span style="font-size:11px">She has the ability to solve complex problems.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('ability')">标记已学</button></div></div><div class="word-item"><div class="word-left">academic <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">学术的；学院的<br><span style="font-size:11px;color:var(--text-muted)">academic research 学术研究</span><br><span style="font-size:11px">She has an excellent academic record.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('academic')">标记已学</button></div></div><div class="word-item"><div class="word-left">access <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">进入；通道；使用权<br><span style="font-size:11px;color:var(--text-muted)">have access to 可以使用</span><br><span style="font-size:11px">Students have access to the online library.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('access')">标记已学</button></div></div><div class="word-item"><div class="word-left">accomplish <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">完成，实现<br><span style="font-size:11px;color:var(--text-muted)">accomplish a goal 达成目标</span><br><span style="font-size:11px">We accomplished our mission on time.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('accomplish')">标记已学</button></div></div><div class="word-item"><div class="word-left">account <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">账户��说明；占比<br><span style="font-size:11px;color:var(--text-muted)">take into account 考虑到</span><br><span style="font-size:11px">You must take all factors into account.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('account')">标记已学</button></div></div><div class="word-item"><div class="word-left">achieve <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">达到，取得<br><span style="font-size:11px;color:var(--text-muted)">achieve success 取得成功</span><br><span style="font-size:11px">She achieved her dream of becoming a doctor.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('achieve')">标记已学</button></div></div><div class="word-item"><div class="word-left">acquire <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">获得，习得<br><span style="font-size:11px;color:var(--text-muted)">acquire knowledge 获取知识</span><br><span style="font-size:11px">It takes time to acquire a new language.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('acquire')">标记已学</button></div></div><div class="word-item"><div class="word-left">adapt <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">适应；改编<br><span style="font-size:11px;color:var(--text-muted)">adapt to 适应于</span><br><span style="font-size:11px">You need to adapt to the new environment.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('adapt')">标记已学</button></div></div><div class="word-item"><div class="word-left">adopt <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">采用；收养<br><span style="font-size:11px;color:var(--text-muted)">adopt a method 采用一种方法</span><br><span style="font-size:11px">The company adopted a new strategy.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('adopt')">标记已学</button></div></div><div class="word-item"><div class="word-left">advance <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">前进；进步；预先的<br><span style="font-size:11px;color:var(--text-muted)">in advance 提前</span><br><span style="font-size:11px">Technology advances rapidly these days.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('advance')">标记已学</button></div></div><div class="word-item"><div class="word-left">advantage <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">优势，有利条件<br><span style="font-size:11px;color:var(--text-muted)">take advantage of 利用</span><br><span style="font-size:11px">The location gives us a competitive advantage.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('advantage')">标记已学</button></div></div><div class="word-item"><div class="word-left">affect <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">影响；感动<br><span style="font-size:11px;color:var(--text-muted)">be affected by 受…影响</span><br><span style="font-size:11px">The weather affects our mood greatly.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('affect')">标记已学</button></div></div><div class="word-item"><div class="word-left">afford <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">负担得起；提供<br><span style="font-size:11px;color:var(--text-muted)">can't afford to 负担不起</span><br><span style="font-size:11px">I can't afford to buy a new car now.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('afford')">标记已学</button></div></div><div class="word-item"><div class="word-left">aim <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">目标；瞄准<br><span style="font-size:11px;color:var(--text-muted)">aim at 瞄准；旨在</span><br><span style="font-size:11px">The project aims to reduce pollution.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('aim')">标记已学</button></div></div><div class="word-item"><div class="word-left">allow <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">允许<br><span style="font-size:11px;color:var(--text-muted)">allow sb to do 允许某人做</span><br><span style="font-size:11px">My parents don't allow me to stay out late.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('allow')">标记已学</button></div></div><div class="word-item"><div class="word-left">alternative <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">替代的；替代方案<br><span style="font-size:11px;color:var(--text-muted)">alternative energy 替代能源</span><br><span style="font-size:11px">We need to find alternative solutions.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('alternative')">标记已学</button></div></div><div class="word-item"><div class="word-left">amount <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">数量；总额<br><span style="font-size:11px;color:var(--text-muted)">a large amount of 大量的</span><br><span style="font-size:11px">A huge amount of money was spent.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('amount')">标记已学</button></div></div><div class="word-item"><div class="word-left">analyze <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">分析<br><span style="font-size:11px;color:var(--text-muted)">analyze the data 分析数据</span><br><span style="font-size:11px">We need to analyze the problem first.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('analyze')">标记已学</button></div></div><div class="word-item"><div class="word-left">apply <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">申请；应用<br><span style="font-size:11px;color:var(--text-muted)">apply for 申请</span><br><span style="font-size:11px">I decided to apply for the scholarship.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('apply')">标记已学</button></div></div><div class="word-item"><div class="word-left">appreciate <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">欣赏；感激；升值<br><span style="font-size:11px;color:var(--text-muted)">appreciate your help 感谢你的帮助</span><br><span style="font-size:11px">I really appreciate your support.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('appreciate')">标记已学</button></div></div><div class="word-item"><div class="word-left">approach <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">方法；接近<br><span style="font-size:11px;color:var(--text-muted)">approach to …的方法</span><br><span style="font-size:11px">We need a new approach to this problem.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('approach')">标记已学</button></div></div><div class="word-item"><div class="word-left">aspect <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">方面<br><span style="font-size:11px;color:var(--text-muted)">in every aspect 在各方面</span><br><span style="font-size:11px">We should consider every aspect of the issue.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('aspect')">标记已学</button></div></div><div class="word-item"><div class="word-left">assume <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">假设；承担<br><span style="font-size:11px;color:var(--text-muted)">assume responsibility 承担责任</span><br><span style="font-size:11px">I assume you've heard the news.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('assume')">标记已学</button></div></div><div class="word-item"><div class="word-left">attempt <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">尝试，试图<br><span style="font-size:11px;color:var(--text-muted)">make an attempt 尝试</span><br><span style="font-size:11px">He attempted to climb the mountain alone.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('attempt')">标记已学</button></div></div><div class="word-item"><div class="word-left">attend <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">参加；照料<br><span style="font-size:11px;color:var(--text-muted)">attend a meeting 参加会议</span><br><span style="font-size:11px">All students must attend the lecture.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('attend')">标记已学</button></div></div><div class="word-item"><div class="word-left">attitude <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">态度，看法<br><span style="font-size:11px;color:var(--text-muted)">positive attitude 积极态度</span><br><span style="font-size:11px">Your attitude determines your altitude.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('attitude')">标记已学</button></div></div><div class="word-item"><div class="word-left">attract <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">吸引<br><span style="font-size:11px;color:var(--text-muted)">attract attention 吸引注意</span><br><span style="font-size:11px">The exhibition attracted many visitors.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('attract')">标记已学</button></div></div><div class="word-item"><div class="word-left">available <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">可用的；有空的<br><span style="font-size:11px;color:var(--text-muted)">be available for 可用于</span><br><span style="font-size:11px">The book is available in the library.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('available')">标记已学</button></div></div><div class="word-item"><div class="word-left">average <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">平均的；普通的<br><span style="font-size:11px;color:var(--text-muted)">on average 平均</span><br><span style="font-size:11px">On average, I read two books a month.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('average')">标记已学</button></div></div><div class="word-item"><div class="word-left">avoid <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">避免<br><span style="font-size:11px;color:var(--text-muted)">avoid doing 避免做</span><br><span style="font-size:11px">Try to avoid making the same mistake.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('avoid')">标记已学</button></div></div><div class="word-item"><div class="word-left">aware <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">意识到的<br><span style="font-size:11px;color:var(--text-muted)">be aware of 意识到</span><br><span style="font-size:11px">Are you aware of the risks involved?</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('aware')">标记已学</button></div></div><div class="word-item"><div class="word-left">benefit <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">利益；受益<br><span style="font-size:11px;color:var(--text-muted)">benefit from 从…获益</span><br><span style="font-size:11px">Everyone can benefit from regular exercise.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('benefit')">标记已学</button></div></div><div class="word-item"><div class="word-left">career <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">职业，生涯<br><span style="font-size:11px;color:var(--text-muted)">career development 职业发展</span><br><span style="font-size:11px">He chose teaching as his career.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('career')">标记已学</button></div></div><div class="word-item"><div class="word-left">challenge <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">挑战<br><span style="font-size:11px;color:var(--text-muted)">face a challenge 面对挑战</span><br><span style="font-size:11px">This job offers a real challenge.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('challenge')">标记已学</button></div></div><div class="word-item"><div class="word-left">communicate <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">交流，沟通<br><span style="font-size:11px;color:var(--text-muted)">communicate with 与…沟通</span><br><span style="font-size:11px">We communicate via email every day.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('communicate')">标记已学</button></div></div><div class="word-item"><div class="word-left">community <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">社区；团体<br><span style="font-size:11px;color:var(--text-muted)">international community 国际社会</span><br><span style="font-size:11px">The local community supported the project.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('community')">标记已学</button></div></div><div class="word-item"><div class="word-left">compare <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">比较<br><span style="font-size:11px;color:var(--text-muted)">compare with/to 与…比较</span><br><span style="font-size:11px">Compare this with that one.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('compare')">标记已学</button></div></div><div class="word-item"><div class="word-left">concern <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">关心；担忧<br><span style="font-size:11px;color:var(--text-muted)">be concerned about 关心</span><br><span style="font-size:11px">She is concerned about the environment.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('concern')">标记已学</button></div></div><div class="word-item"><div class="word-left">consider <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">考虑；认为<br><span style="font-size:11px;color:var(--text-muted)">consider doing 考虑做</span><br><span style="font-size:11px">I'm considering changing my job.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('consider')">标记已学</button></div></div><div class="word-item"><div class="word-left">contribute <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">贡献；捐献<br><span style="font-size:11px;color:var(--text-muted)">contribute to 有助于</span><br><span style="font-size:11px">Exercise contributes to good health.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('contribute')">标记已学</button></div></div><div class="word-item"><div class="word-left">create <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">创造，创建<br><span style="font-size:11px;color:var(--text-muted)">create opportunities 创造机会</span><br><span style="font-size:11px">Artists create beauty from imagination.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('create')">标记已学</button></div></div><div class="word-item"><div class="word-left">culture <span style="font-size:11px;color:var(--text-muted)">[5★]</span></div><div class="word-mid">文化<br><span style="font-size:11px;color:var(--text-muted)">cultural difference 文化差异</span><br><span style="font-size:11px">Learning about other cultures is important.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('culture')">标记已学</button></div></div><div class="word-item"><div class="word-left">abroad <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">到国外；在国外<br><span style="font-size:11px;color:var(--text-muted)">go abroad 出国</span><br><span style="font-size:11px">He studied abroad for two years.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('abroad')">标记已学</button></div></div><div class="word-item"><div class="word-left">absence <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">缺席，不在<br><span style="font-size:11px;color:var(--text-muted)">in the absence of 在…不在时</span><br><span style="font-size:11px">His absence was noticed by everyone.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('absence')">标记已学</button></div></div><div class="word-item"><div class="word-left">absolute <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">绝对的，完全的<br><span style="font-size:11px;color:var(--text-muted)">absolute majority 绝对多数</span><br><span style="font-size:11px">I have absolute trust in her.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('absolute')">标记已学</button></div></div><div class="word-item"><div class="word-left">absorb <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">吸收；吸引<br><span style="font-size:11px;color:var(--text-muted)">be absorbed in 全神贯注于</span><br><span style="font-size:11px">Plants absorb water from the soil.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('absorb')">标记已学</button></div></div><div class="word-item"><div class="word-left">abstract <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">抽象的；摘要<br><span style="font-size:11px;color:var(--text-muted)">abstract concept 抽象概念</span><br><span style="font-size:11px">The idea is too abstract to understand.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('abstract')">标记已学</button></div></div><div class="word-item"><div class="word-left">abundant <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">丰富的，充裕的<br><span style="font-size:11px;color:var(--text-muted)">be abundant in 富含</span><br><span style="font-size:11px">The region is abundant in natural resources.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('abundant')">标记已学</button></div></div><div class="word-item"><div class="word-left">accelerate <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">加速，促进<br><span style="font-size:11px;color:var(--text-muted)">accelerate the pace 加快步伐</span><br><span style="font-size:11px">The car accelerated quickly.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('accelerate')">标记已学</button></div></div><div class="word-item"><div class="word-left">accommodate <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">容纳；提供住宿；适应<br><span style="font-size:11px;color:var(--text-muted)">accommodate to 适应</span><br><span style="font-size:11px">The hotel can accommodate 500 guests.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('accommodate')">标记已学</button></div></div><div class="word-item"><div class="word-left">accompany <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">陪伴；伴随<br><span style="font-size:11px;color:var(--text-muted)">be accompanied by 由…陪同</span><br><span style="font-size:11px">She accompanied me to the hospital.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('accompany')">标记已学</button></div></div><div class="word-item"><div class="word-left">accumulate <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">积累，积聚<br><span style="font-size:11px;color:var(--text-muted)">accumulate experience 积累经验</span><br><span style="font-size:11px">He accumulated great wealth over the years.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('accumulate')">标记已学</button></div></div><div class="word-item"><div class="word-left">accurate <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">准确的，精确的<br><span style="font-size:11px;color:var(--text-muted)">accurate data 准确数据</span><br><span style="font-size:11px">The report provides accurate information.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('accurate')">标记已学</button></div></div><div class="word-item"><div class="word-left">acknowledge <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">承认；感谢<br><span style="font-size:11px;color:var(--text-muted)">acknowledge the importance 承认重要性</span><br><span style="font-size:11px">He acknowledged his mistake.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('acknowledge')">标记已学</button></div></div><div class="word-item"><div class="word-left">adequate <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">足够的；适当的<br><span style="font-size:11px;color:var(--text-muted)">adequate supply 充足供应</span><br><span style="font-size:11px">We have adequate food for the trip.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('adequate')">标记已学</button></div></div><div class="word-item"><div class="word-left">adjust <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">调整，适应<br><span style="font-size:11px;color:var(--text-muted)">adjust to 调整以适应</span><br><span style="font-size:11px">I need to adjust my schedule.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('adjust')">标记已学</button></div></div><div class="word-item"><div class="word-left">administration <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">管理；行政；政府<br><span style="font-size:11px;color:var(--text-muted)">business administration 工商管理</span><br><span style="font-size:11px">The new administration took office.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('administration')">标记已学</button></div></div><div class="word-item"><div class="word-left">admire <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">钦佩，赞赏<br><span style="font-size:11px;color:var(--text-muted)">admire sb for sth 因某事钦佩某人</span><br><span style="font-size:11px">I admire her courage and determination.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('admire')">标记已学</button></div></div><div class="word-item"><div class="word-left">advertise <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">做广告，宣传<br><span style="font-size:11px;color:var(--text-muted)">advertise for 为…做广告</span><br><span style="font-size:11px">They advertised the job online.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('advertise')">标记已学</button></div></div><div class="word-item"><div class="word-left">affair <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">事务；事件<br><span style="font-size:11px;color:var(--text-muted)">foreign affairs 外交事务</span><br><span style="font-size:11px">This is a matter of public affair.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('affair')">标记已学</button></div></div><div class="word-item"><div class="word-left">aggressive <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">侵略的；好斗的；积极的<br><span style="font-size:11px;color:var(--text-muted)">aggressive marketing 积极营销</span><br><span style="font-size:11px">He has an aggressive approach to business.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('aggressive')">标记已学</button></div></div><div class="word-item"><div class="word-left">agriculture <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">农业<br><span style="font-size:11px;color:var(--text-muted)">modern agriculture 现代农业</span><br><span style="font-size:11px">Agriculture is vital to the economy.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('agriculture')">标记已学</button></div></div><div class="word-item"><div class="word-left">aid <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">援助，帮助<br><span style="font-size:11px;color:var(--text-muted)">with the aid of 在…帮助下</span><br><span style="font-size:11px">They provided aid to the disaster victims.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('aid')">标记已学</button></div></div><div class="word-item"><div class="word-left">alarm <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">警报；惊恐<br><span style="font-size:11px;color:var(--text-muted)">sound the alarm 拉响警报</span><br><span style="font-size:11px">The fire alarm went off at midnight.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('alarm')">标记已学</button></div></div><div class="word-item"><div class="word-left">amaze <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">使惊奇<br><span style="font-size:11px;color:var(--text-muted)">be amazed at 对…感到惊奇</span><br><span style="font-size:11px">Her performance amazed the audience.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('amaze')">标记已学</button></div></div><div class="word-item"><div class="word-left">announce <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">宣布，通告<br><span style="font-size:11px;color:var(--text-muted)">announce the result 宣布结果</span><br><span style="font-size:11px">The government announced new policies.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('announce')">标记已学</button></div></div><div class="word-item"><div class="word-left">annual <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">年度的，每年的<br><span style="font-size:11px;color:var(--text-muted)">annual report 年度报告</span><br><span style="font-size:11px">The annual meeting will be held next week.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('annual')">标记已学</button></div></div><div class="word-item"><div class="word-left">anxiety <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">焦虑，忧虑<br><span style="font-size:11px;color:var(--text-muted)">anxiety about 对…的焦虑</span><br><span style="font-size:11px">She suffers from anxiety about exams.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('anxiety')">标记已学</button></div></div><div class="word-item"><div class="word-left">apparent <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">明显的，表面上的<br><span style="font-size:11px;color:var(--text-muted)">apparent reason 明显的原因</span><br><span style="font-size:11px">It became apparent that he was lying.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('apparent')">标记已学</button></div></div><div class="word-item"><div class="word-left">appeal <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">呼吁；吸引；上诉<br><span style="font-size:11px;color:var(--text-muted)">appeal to 吸引；呼吁</span><br><span style="font-size:11px">The charity appealed for donations.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('appeal')">标记已学</button></div></div><div class="word-item"><div class="word-left">appropriate <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">适当的<br><span style="font-size:11px;color:var(--text-muted)">appropriate measures 适当措施</span><br><span style="font-size:11px">Is this appropriate for a formal occasion?</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('appropriate')">标记已学</button></div></div><div class="word-item"><div class="word-left">approve <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">批准；赞成<br><span style="font-size:11px;color:var(--text-muted)">approve of 赞成</span><br><span style="font-size:11px">The committee approved the proposal.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('approve')">标记已学</button></div></div><div class="word-item"><div class="word-left">argue <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">争论；主张<br><span style="font-size:11px;color:var(--text-muted)">argue about 争论关于</span><br><span style="font-size:11px">They argued about the best solution.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('argue')">标记已学</button></div></div><div class="word-item"><div class="word-left">arise <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">出现，产生<br><span style="font-size:11px;color:var(--text-muted)">arise from 由…引起</span><br><span style="font-size:11px">Problems may arise during the project.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('arise')">标记已学</button></div></div><div class="word-item"><div class="word-left">arrange <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">安排，整理<br><span style="font-size:11px;color:var(--text-muted)">arrange for 安排</span><br><span style="font-size:11px">I'll arrange a meeting for tomorrow.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('arrange')">标记已学</button></div></div><div class="word-item"><div class="word-left">assess <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">评估，评定<br><span style="font-size:11px;color:var(--text-muted)">assess the impact 评估影响</span><br><span style="font-size:11px">We need to assess the situation carefully.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('assess')">标记已学</button></div></div><div class="word-item"><div class="word-left">assign <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">分配；指派<br><span style="font-size:11px;color:var(--text-muted)">assign sb to do 指派某人做</span><br><span style="font-size:11px">The teacher assigned homework to us.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('assign')">标记已学</button></div></div><div class="word-item"><div class="word-left">assist <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">帮助，协助<br><span style="font-size:11px;color:var(--text-muted)">assist sb in doing 帮助某人做</span><br><span style="font-size:11px">Can you assist me with this task?</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('assist')">标记已学</button></div></div><div class="word-item"><div class="word-left">associate <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">联系；关联<br><span style="font-size:11px;color:var(--text-muted)">be associated with 与…有关</span><br><span style="font-size:11px">People often associate success with happiness.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('associate')">标记已学</button></div></div><div class="word-item"><div class="word-left">atmosphere <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">气氛；大气<br><span style="font-size:11px;color:var(--text-muted)">friendly atmosphere 友好的氛围</span><br><span style="font-size:11px">The restaurant has a romantic atmosphere.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('atmosphere')">标记已学</button></div></div><div class="word-item"><div class="word-left">attach <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">附上；重视<br><span style="font-size:11px;color:var(--text-muted)">attach importance to 重视</span><br><span style="font-size:11px">Please attach your resume to the email.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('attach')">标记已学</button></div></div><div class="word-item"><div class="word-left">authority <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">权威；当局<br><span style="font-size:11px;color:var(--text-muted)">local authorities 地方当局</span><br><span style="font-size:11px">He is an authority on ancient history.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('authority')">标记已学</button></div></div><div class="word-item"><div class="word-left">award <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">奖励；授予<br><span style="font-size:11px;color:var(--text-muted)">win an award 获奖</span><br><span style="font-size:11px">She won the award for best actress.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('award')">标记已学</button></div></div><div class="word-item"><div class="word-left">barrier <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">障碍，壁垒<br><span style="font-size:11px;color:var(--text-muted)">language barrier 语言障碍</span><br><span style="font-size:11px">Language is not a barrier to friendship.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('barrier')">标记已学</button></div></div><div class="word-item"><div class="word-left">budget <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">预算<br><span style="font-size:11px;color:var(--text-muted)">within budget 在预算内</span><br><span style="font-size:11px">We need to plan our budget carefully.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('budget')">标记已学</button></div></div><div class="word-item"><div class="word-left">capable <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">有能力的<br><span style="font-size:11px;color:var(--text-muted)">be capable of 能够</span><br><span style="font-size:11px">She is capable of handling this task.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('capable')">标记已学</button></div></div><div class="word-item"><div class="word-left">characteristic <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">特征；典型的<br><span style="font-size:11px;color:var(--text-muted)">distinctive characteristic 显著特征</span><br><span style="font-size:11px">What are the characteristics of a good leader?</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('characteristic')">标记已学</button></div></div><div class="word-item"><div class="word-left">circumstance <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">环境，情况<br><span style="font-size:11px;color:var(--text-muted)">under the circumstances 在这种情况下</span><br><span style="font-size:11px">Under no circumstances should you lie.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('circumstance')">标记已学</button></div></div><div class="word-item"><div class="word-left">claim <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">声称；索赔<br><span style="font-size:11px;color:var(--text-muted)">claim that 声称</span><br><span style="font-size:11px">He claims to have seen the accident.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('claim')">标记已学</button></div></div><div class="word-item"><div class="word-left">compete <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">竞争<br><span style="font-size:11px;color:var(--text-muted)">compete with 与…竞争</span><br><span style="font-size:11px">Companies compete for market share.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('compete')">标记已学</button></div></div><div class="word-item"><div class="word-left">concentrate <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">集中，专注<br><span style="font-size:11px;color:var(--text-muted)">concentrate on 专注于</span><br><span style="font-size:11px">I can't concentrate on my work.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('concentrate')">标记已学</button></div></div><div class="word-item"><div class="word-left">confirm <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">确认，证实<br><span style="font-size:11px;color:var(--text-muted)">confirm the reservation 确认预订</span><br><span style="font-size:11px">Please confirm your attendance.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('confirm')">标记已学</button></div></div><div class="word-item"><div class="word-left">consequence <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">结果，后果<br><span style="font-size:11px;color:var(--text-muted)">as a consequence 因此</span><br><span style="font-size:11px">Every action has its consequence.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('consequence')">标记已学</button></div></div><div class="word-item"><div class="word-left">consume <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">消费；消耗<br><span style="font-size:11px;color:var(--text-muted)">consume energy 消耗能量</span><br><span style="font-size:11px">We consume too much plastic.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('consume')">标记已学</button></div></div><div class="word-item"><div class="word-left">convince <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">说服，使确信<br><span style="font-size:11px;color:var(--text-muted)">convince sb of 使某人相信</span><br><span style="font-size:11px">He convinced me to join the team.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('convince')">标记已学</button></div></div><div class="word-item"><div class="word-left">cooperate <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">合作<br><span style="font-size:11px;color:var(--text-muted)">cooperate with 与…合作</span><br><span style="font-size:11px">We should cooperate with each other.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('cooperate')">标记已学</button></div></div><div class="word-item"><div class="word-left">crisis <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">危机<br><span style="font-size:11px;color:var(--text-muted)">economic crisis 经济危机</span><br><span style="font-size:11px">The company survived the financial crisis.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('crisis')">标记已学</button></div></div><div class="word-item"><div class="word-left">debate <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">辩论，讨论<br><span style="font-size:11px;color:var(--text-muted)">debate about 关于…的辩论</span><br><span style="font-size:11px">They debated the issue for hours.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('debate')">标记已学</button></div></div><div class="word-item"><div class="word-left">declare <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">宣布，声明<br><span style="font-size:11px;color:var(--text-muted)">declare war 宣战</span><br><span style="font-size:11px">The president declared a state of emergency.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('declare')">标记已学</button></div></div><div class="word-item"><div class="word-left">decline <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">下降；拒绝<br><span style="font-size:11px;color:var(--text-muted)">decline an invitation 婉拒邀请</span><br><span style="font-size:11px">The population of the town is declining.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('decline')">标记已学</button></div></div><div class="word-item"><div class="word-left">decrease <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">减少，降低<br><span style="font-size:11px;color:var(--text-muted)">decrease by 减少了</span><br><span style="font-size:11px">The price decreased by 10 percent.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('decrease')">标记已学</button></div></div><div class="word-item"><div class="word-left">demonstrate <span style="font-size:11px;color:var(--text-muted)">[4★]</span></div><div class="word-mid">展示；证明；示威<br><span style="font-size:11px;color:var(--text-muted)">demonstrate the ability 展示能力</span><br><span style="font-size:11px">The experiment demonstrates the theory.</span></div><div class="word-right"><button class="btn-sm btn-primary" onclick="toggleWord('demonstrate')">标记已学</button></div></div></div></div>
+<div class="card"><div class="card-title">📝 作文模板 <span class="auto-badge">内置</span></div>
+<div class="btn-group" style="margin-bottom:12px"><button class="active" onclick="switchEssayTpl('letter')" id="essayTabLetter">书信类</button><button onclick="switchEssayTpl('argument')" id="essayTabArgument">议论文</button><button onclick="switchEssayTpl('narrative')" id="essayTabNarrative">记叙文</button></div>
+<div id="essayTplContent"></div></div>
+<div class="card" id="wordReviewCard" style="display:none"><div class="card-title">🔄 遗忘复习</div><div id="wordReviewContent"></div></div>
+
+<!-- 新增：每日短文 + 听力跟读 -->
+<div class="card"><div class="card-title">🎧 每日短文 · 听力跟读 <span class="auto-badge">30篇轮换</span></div>
+<div class="essay-toolbar">
+<button class="essay-nav-btn" onclick="changeDailyEssay(-1)">« 上一天</button>
+<span class="essay-title" id="dailyEssayTitle">第 1 天短文</span>
+<button class="essay-nav-btn" onclick="changeDailyEssay(1)">下一天 »</button>
+</div>
+<div class="essay-meta">
+<span class="essay-badge" id="dailyEssayBadge">Day 1 / 30</span>
+<span class="essay-topic" id="dailyEssayTopic">主题：教育</span>
+<button class="essay-nav-btn" onclick="toggleEssayTranslation()">隐藏翻译</button>
+</div>
+<div class="essay-section">
+<h4>📝 英文原文</h4>
+<div class="essay-eng-text" id="dailyEssayEng"></div>
+</div>
+<div class="essay-section" id="dailyEssayChnSection">
+<h4>🇨🇳 中文翻译</h4>
+<div class="essay-chn-text" id="dailyEssayChn"></div>
+</div>
+<div class="tts-controls">
+<button class="tts-btn" onclick="ttsPlayAll()">▶ 整篇播放</button>
+<button class="tts-btn" onclick="ttsPlaySentence()">⏭ 逐句播放</button>
+<button class="tts-btn" onclick="ttsPause()">⏸ 暂停</button>
+<button class="tts-btn" onclick="ttsStop()">⏹ 停止</button>
+<button class="tts-btn tts-highlight" onclick="ttsShadowStart()">🎤 跟读模式</button>
+</div>
+<div class="tts-speed-row">
+<label>语速：</label>
+<input type="range" id="ttsRate" min="0.5" max="1.5" step="0.1" value="0.9" oninput="updateTtsRate(this.value)">
+<span class="rate-label" id="ttsRateLabel">0.9x</span>
+</div>
+<div class="tts-status" id="ttsStatus">就绪</div>
+<div class="shadow-panel" id="shadowPanel">
+<div class="shadow-header">
+<span style="font-size:13px;font-weight:600;color:var(--accent-deep)">🎤 跟读模式</span>
+<span class="shadow-progress"><span id="shadowCur">第 1 句</span> / <span id="shadowTotal">共 N 句</span></span>
+</div>
+<div class="shadow-actions">
+<button class="tts-btn" onclick="ttsShadowReplay()">🔁 重听本句</button>
+<button class="tts-btn tts-highlight" onclick="ttsShadowNext()">✓ 下一句</button>
+<button class="tts-btn tts-danger" onclick="ttsShadowExit()">✕ 退出</button>
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- ===== PAGE 4: 高数二 ===== -->
+<div class="page" id="page-math">
+<div class="page-header"><h2>📐 高数二备考</h2><div class="page-desc">极限 · 微分 · 积分 · 多元 · 概率</div></div>
+<div class="card"><div class="card-title">📚 知识章节 <span class="auto-badge">内置</span></div>
+<div class="chapter-nav" id="mathChapters"></div>
+<div id="mathContent"></div></div>
+<div class="card"><div class="card-title">❌ 错题本 <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="addWrongQ()">+ 添加错题</button></div>
+<div id="wrongQForm" style="display:none;margin-bottom:12px">
+<div class="form-row"><div class="form-group"><input class="input" id="wqTitle" placeholder="题目描述"></div><div class="form-group fixed-sm"><select class="select" id="wqChapter"><option>极限与连续</option><option>一元微分</option><option>一元积分</option><option>多元微积分</option><option>概率论</option></select></div><div class="form-group fixed-sm"><select class="select" id="wqDiff"><option value="basic">基础</option><option value="advanced">进阶</option></select></div><div class="form-group fixed-sm" style="justify-content:flex-end"><button class="btn btn-primary btn-sm" onclick="saveWrongQ()">保存</button><button class="btn btn-sm" onclick="document.getElementById('wrongQForm').style.display='none'">取消</button></div></div></div>
+<div id="wrongQList"></div></div>
+</div>
+
+<!-- ===== PAGE 5: 政治 ===== -->
+<div class="page" id="page-politics">
+<div class="page-header"><h2>📑 政治备考</h2><div class="page-desc">马克思主义 · 毛泽东思想 · 习近平思想 · 时事政治</div></div>
+<div class="card"><div class="card-title">🌍 时事政治 <span class="auto-badge">2025.7-2026.6</span></div>
+<div class="search-box"><input class="input" id="szSearch" placeholder="🔍 搜索时事关键词..." oninput="filterShizheng()"><button class="btn btn-outline btn-sm" onclick="startPolQuiz()">自测模式</button></div>
+<div class="month-tabs" id="szMonthTabs"></div>
+<div id="szContent" style="max-height:500px;overflow-y:auto"></div></div>
+<div class="card"><div class="card-title">📖 理论知识 <span class="auto-badge">内置</span></div>
+<div class="chapter-nav" id="polChapters"></div>
+<div id="polContent"></div></div>
+<div class="card"><div class="card-title">📝 答题模板 <span class="auto-badge">内置</span></div><div id="polTemplates"></div></div>
+<div class="card" id="polQuizCard" style="display:none"><div class="card-title">🎯 时事自测</div><div id="polQuizContent"></div></div>
+<div class="card"><div class="card-title">📅 背诵打卡日历</div>
+<div class="pol-calendar-toolbar">
+<button class="pol-cal-nav-btn" onclick="polCalChangeMonth(-1)">« 上月</button>
+<span class="pol-calendar-title" id="polCalTitle">2026年7月</span>
+<button class="pol-cal-nav-btn" onclick="polCalChangeMonth(1)">下月 »</button>
+<button class="pol-cal-today-btn" onclick="polCalGoToday()">今天</button>
+</div>
+<div class="pol-cal-stats">
+<span>本月背诵 <strong id="polCalMonthCount">0</strong> 天</span>
+<span>连续 <strong id="polCalStreak">0</strong> 天</span>
+<span>累计 <strong id="polCalTotal">0</strong> 天</span>
+</div>
+<div id="polCalendar"></div>
+</div>
+</div>
+
+<!-- ===== PAGE 6: 任务 ===== -->
+<div class="page" id="page-tasks">
+<div class="page-header"><h2>✅ 每日任务打卡</h2><div class="page-desc">设定每日/工作日任务，坚持打卡</div></div>
+<div class="card"><div class="card-title">➕ 添加任务</div>
+<div class="form-row"><div class="form-group"><input class="input" id="taskTitle" placeholder="任务名称"></div><div class="form-group fixed-sm"><select class="select" id="taskRepeat"><option value="daily">每天</option><option value="weekday">工作日</option><option value="once">一次性</option></select></div><div class="form-group fixed-sm" style="justify-content:flex-end"><button class="btn btn-primary btn-sm" onclick="addTask()">添加</button></div></div></div>
+<div class="card"><div class="card-title">📋 今日任务 <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="resetTodayTasks()">全部重置</button></div>
+<div id="taskList"></div></div>
+</div>
+
+<!-- ===== PAGE 7: 日记 ===== -->
+<div class="page" id="page-diary">
+<div class="page-header"><h2>📔 日记 &amp; 总结复盘</h2><div class="page-desc">记录每日感悟，定期复盘成长</div></div>
+<div class="card"><div class="card-title">📝 今日日记</div>
+<div class="form-row" style="margin-bottom:8px"><div class="form-group fixed-sm"><label class="field-label">日期</label><input class="input" type="date" id="diaryDate"></div><div class="form-group"><label class="field-label">标题</label><input class="input" id="diaryTitle" placeholder="今天想记录什么..."></div></div>
+<textarea class="big-textarea" id="diaryContent" placeholder="写下今天的想法、收获、反思..."></textarea>
+<div style="margin-top:8px"><button class="btn btn-primary" onclick="saveDiary()">保存日记</button></div></div>
+<div class="card"><div class="card-title">📋 复盘模板</div>
+<div class="diary-template-grid">
+<div class="diary-tpl-card" onclick="useDiaryTpl('daily')"><div class="tpl-title">📅 每日复盘</div><div class="tpl-desc">完成/未完成 · 收获 · 改进</div></div>
+<div class="diary-tpl-card" onclick="useDiaryTpl('weekly')"><div class="tpl-title">📊 每周总结</div><div class="tpl-desc">本周成就 · 问题 · 下周计划</div></div>
+<div class="diary-tpl-card" onclick="useDiaryTpl('monthly')"><div class="tpl-title">🗓️ 月度回顾</div><div class="tpl-desc">目标进度 · 收获 · 下月目标</div></div>
+<div class="diary-tpl-card" onclick="useDiaryTpl('study')"><div class="tpl-title">📚 学习复盘</div><div class="tpl-desc">学习内容 · 掌握程度 · 薄弱点</div></div>
+</div></div>
+<div class="card"><div class="card-title">📚 历史日记</div><div id="diaryHistory"></div></div>
+</div>
+
+<!-- ===== PAGE 8: 设置 ===== -->
+<div class="page" id="page-settings">
+<div class="page-header"><h2>⚙️ 系统基础设置</h2><div class="page-desc">个性化你的工作台体验</div></div>
+<div class="card"><div class="card-title">🎨 外观设置</div>
+<div class="setting-row"><div><div class="setting-label">字体大小</div><div class="setting-desc">调整整体文字大小</div></div><div class="btn-group" id="fontSizeGroup"><button data-val="small" onclick="setFontSize('small')">小</button><button data-val="medium" class="active" onclick="setFontSize('medium')">中</button><button data-val="large" onclick="setFontSize('large')">大</button></div></div>
+<div class="setting-row"><div><div class="setting-label">卡片间距</div><div class="setting-desc">调整卡片之间的间距</div></div><div class="btn-group" id="cardGapGroup"><button data-val="compact" onclick="setCardGap('compact')">紧凑</button><button data-val="normal" class="active" onclick="setCardGap('normal')">标准</button><button data-val="loose" onclick="setCardGap('loose')">宽松</button></div></div></div>
+<div class="card"><div class="card-title">💾 数据管理</div>
+<div class="setting-row"><div><div class="setting-label">导出全部数据</div><div class="setting-desc">将所有数据导出为JSON备份文件</div></div><button class="btn btn-outline btn-sm" onclick="exportAllData()">导出备份</button></div>
+<div class="setting-row"><div><div class="setting-label">导入数据备份</div><div class="setting-desc">从JSON文件恢复数据</div></div><button class="btn btn-outline btn-sm" onclick="document.getElementById('importFile').click()">导入备份</button><input type="file" id="importFile" style="display:none" accept=".json" onchange="importAllData(this)"></div>
+<div class="setting-row"><div><div class="setting-label">重置所有数据</div><div class="setting-desc">清空所有本地数据，此操作不可恢复</div></div><button class="btn btn-danger btn-sm" onclick="resetAllData()">重置数据</button></div></div>
+<div class="card"><div class="card-title">ℹ️ 关于</div><div style="font-size:13px;color:var(--text-body);line-height:2">志雯工作台 v3.0<br>一个集记账、学习、任务、日记于一体的个人工作站<br>所有数据存储在浏览器本地，刷新不丢失<br>🌸 为志雯定制的粉色温柔工作台 🌸</div></div>
+</div>
+
+</main>
+</div>
+<button class="floating-formula-btn" id="formulaFloatBtn" onclick="toggleFormulaModal()" title="公式收藏夹">📐</button>
+<div class="formula-modal" id="formulaModal" onclick="if(event.target===this)toggleFormulaModal()">
+<div class="formula-modal-content"><h3 style="color:var(--text-title);margin-bottom:12px">📐 公式收藏夹</h3><div id="formulaFavList"></div><button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="toggleFormulaModal()">关闭</button></div>
+</div>
+<script>
+
+// ========== 数据库 ==========
+const DB_KEY = 'zhiwen_workstation_data';
+function loadDB(){try{const d=localStorage.getItem(DB_KEY);return d?JSON.parse(d):getDefaultDB();}catch(e){return getDefaultDB();}}
+function saveDB(db){localStorage.setItem(DB_KEY,JSON.stringify(db));}
+function getDefaultDB(){return{
+  bills:[],monthlyBudget:3000,
+  learnedWords:{},wordReviewQueue:{},essayDrafts:[],
+  mathWrongQs:[],mathTotalDone:0,formulaFavs:[],
+  polCheckins:{},polStreak:0,polLastDate:'',
+  tasks:[],taskChecks:{},
+  diaries:[],
+  settings:{fontSize:'medium',cardGap:'normal'}
+};}
+let DB=loadDB();
+// ========== 页面切换 ==========
+function switchPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const page=document.getElementById('page-'+name);
+  if(page)page.classList.add('active');
+  const nav=document.querySelector('[data-page="'+name+'"]');
+  if(nav)nav.classList.add('active');
+  if(name==='dashboard')renderDashboard();
+  if(name==='accounting')renderAccounting();
+  if(name==='english'){renderWords();switchEssayTpl('letter');renderDailyEssay();}
+  if(name==='math')renderMath();
+  if(name==='politics')renderPolitics();
+  if(name==='tasks')renderTasks();
+  if(name==='diary')renderDiary();
+  if(name==='settings')renderSettings();
+  closeSidebar();
+}
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const overlay=document.getElementById('mobileOverlay');
+  sb.classList.toggle('open');
+  overlay.classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('show');
+}
+// ========== 工具函数 ==========
+function fmt(n){return Number(n||0).toFixed(2);}
+function today(){return new Date().toISOString().slice(0,10);}
+function thisMonth(){return today().slice(0,7);}
+function getWeekday(d){const day=new Date(d).getDay();return day>0&&day<6;}
+function fmtDate(d){return d.slice(5);}
+// ========== 仪表盘 ==========
+function renderDashboard(){
+  DB=loadDB();
+  const now=new Date();const tm=thisMonth();const td=today();
+  let todayExp=0,monthInc=0,monthExp=0;
+  DB.bills.forEach(b=>{if(b.date===td&&b.type==='expense')todayExp+=b.amount;if(b.date.startsWith(tm)){if(b.type==='income')monthInc+=b.amount;else monthExp+=b.amount;}});
+  document.getElementById('dashTodayExpense').textContent='¥'+fmt(todayExp);
+  document.getElementById('dashMonthIncome').textContent='¥'+fmt(monthInc);
+  document.getElementById('dashMonthExpense').textContent='¥'+fmt(monthExp);
+  document.getElementById('dashMonthBalance').textContent='¥'+fmt(monthInc-monthExp);
+  const budget=DB.monthlyBudget||3000;const pct=budget>0?Math.min(100,monthExp/budget*100):0;
+  const bar=document.getElementById('dashBudgetBar');bar.style.width=pct+'%';
+  bar.className='budget-bar-fill '+(pct>=100?'over':pct>=80?'warning':'normal');
+  const alert=document.getElementById('dashBudgetAlert');
+  alert.textContent=pct>=100?'⚠️ 已超预算！':pct>=80?'⚡ 预算使用 '+pct.toFixed(0)+'%':'预算使用 '+pct.toFixed(0)+'%';
+  alert.className='budget-alert '+(pct>=100?'over':pct>=80?'warning':'');
+  document.getElementById('dashWordTotal').textContent=Object.keys(DB.learnedWords||{}).length;
+  const reviewCount=Object.values(DB.wordReviewQueue||{}).filter(v=>v<=now.getTime()).length;
+  document.getElementById('dashReviewCount').textContent=reviewCount;
+  document.getElementById('dashMathTotal').textContent=DB.mathTotalDone||0;
+  document.getElementById('dashMathWrong').textContent=(DB.mathWrongQs||[]).length;
+  document.getElementById('dashPolStreak').textContent=DB.polStreak||0;
+  // Quick tasks
+  let qhtml='';
+  (DB.tasks||[]).forEach((t,i)=>{
+    const ck=DB.taskChecks||{};const done=ck[td+'_'+i];
+    qhtml+=`<label class="task-check${done?' done':''}" onclick="toggleTaskQuick(${i})"><input type="checkbox" ${done?'checked':''}>${t.title}${t.repeat==='weekday'?' [工作日]':''}</label>`;
+  });
+  document.getElementById('dashQuickTasks').innerHTML=qhtml||'<div class="empty-state">暂无任务，去任务页面添加吧~</div>';
+}
+function toggleTaskQuick(i){
+  DB=loadDB();const td=today();DB.taskChecks=DB.taskChecks||{};
+  DB.taskChecks[td+'_'+i]=!DB.taskChecks[td+'_'+i];saveDB(DB);renderDashboard();
+}
+
+// ========== 记账 ==========
+function renderAccounting(){
+  DB=loadDB();
+  document.getElementById('monthlyBudget').value=DB.monthlyBudget||3000;
+  document.getElementById('billDate').value=today();
+  renderBills();renderBudget();
+}
+function addBill(){
+  const type=document.getElementById('billType').value;
+  const amount=parseFloat(document.getElementById('billAmount').value);
+  const category=document.getElementById('billCategory').value;
+  const date=document.getElementById('billDate').value;
+  const note=document.getElementById('billNote').value;
+  if(!amount||amount<=0)return alert('请输入有效金额');
+  DB=loadDB();DB.bills.push({id:Date.now(),type,amount,category,date,note});
+  DB.bills.sort((a,b)=>b.date.localeCompare(a.date));
+  saveDB(DB);
+  document.getElementById('billAmount').value='';document.getElementById('billNote').value='';
+  renderBills();renderBudget();
+}
+function deleteBill(id){
+  if(!confirm('确定删除此账单？'))return;
+  DB=loadDB();DB.bills=DB.bills.filter(b=>b.id!==id);saveDB(DB);renderBills();renderBudget();
+}
+function renderBills(){
+  DB=loadDB();let html='';
+  DB.bills.forEach(b=>{
+    html+=`<tr><td>${fmtDate(b.date)}</td><td><span class="tag tag-${b.type}">${b.type==='income'?'收入':'支出'}</span></td><td>${b.category}</td><td style="font-weight:600;color:${b.type==='income'?'var(--accent-deep)':'var(--text-section)'}">¥${fmt(b.amount)}</td><td>${b.note||''}</td><td><button class="btn-danger btn-sm" onclick="deleteBill(${b.id})">删除</button></td></tr>`;
+  });
+  document.getElementById('billTableBody').innerHTML=html||'<tr><td colspan="6" class="empty-state">还没有账单记录，开始记账吧~</td></tr>';
+}
+function renderBudget(){
+  DB=loadDB();const tm=thisMonth();const budget=DB.monthlyBudget||3000;
+  let monthExp=0;DB.bills.forEach(b=>{if(b.date.startsWith(tm)&&b.type==='expense')monthExp+=b.amount;});
+  const pct=budget>0?Math.min(100,monthExp/budget*100):0;
+  const status=document.getElementById('budgetStatus');
+  status.innerHTML=`<span style="font-size:13px">本月支出 <b style="color:var(--text-title)">¥${fmt(monthExp)}</b> / 预算 <b>¥${fmt(budget)}</b></span>
+  <div class="budget-bar"><div class="budget-bar-fill ${pct>=100?'over':pct>=80?'warning':'normal'}" style="width:${pct}%"></div></div>
+  <div class="budget-alert ${pct>=100?'over':pct>=80?'warning':''}">${pct>=100?'⚠️ 已超预算！请控制支出':pct>=80?'⚡ 预算使用 '+pct.toFixed(0)+'%，请注意':'预算使用 '+pct.toFixed(0)+'%'}</div>`;
+}
+function saveBudget(){
+  DB=loadDB();DB.monthlyBudget=parseFloat(document.getElementById('monthlyBudget').value)||3000;
+  saveDB(DB);renderBudget();
+}
+function exportBills(){
+  DB=loadDB();let text='志雯账单记录\\n'+'='.repeat(30)+'\\n';
+  DB.bills.forEach(b=>{text+=`${b.date} | ${b.type==='income'?'收入':'支出'} | ${b.category} | ¥${fmt(b.amount)} | ${b.note||''}\\n`;});
+  const blob=new Blob([text],{type:'text/plain'});const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='账单_'+today()+'.txt';a.click();
+}
+
+// ========== 英语 - 内置词库 ==========
+const WORD_BANK=[
+{en:"abandon",zh:"放弃，抛弃",coll:"abandon oneself to 沉溺于",ex:"He abandoned his plan to travel.",freq:5},
+{en:"ability",zh:"能力，才能",coll:"to the best of one's ability 尽其所能",ex:"She has the ability to solve complex problems.",freq:5},
+{en:"abroad",zh:"到国外；在国外",coll:"go abroad 出国",ex:"He studied abroad for two years.",freq:4},
+{en:"absence",zh:"缺席，不在",coll:"in the absence of 在…不在时",ex:"His absence was noticed by everyone.",freq:4},
+{en:"absolute",zh:"绝对的，完全的",coll:"absolute majority 绝对多数",ex:"I have absolute trust in her.",freq:4},
+{en:"absorb",zh:"吸收；吸引",coll:"be absorbed in 全神贯注于",ex:"Plants absorb water from the soil.",freq:4},
+{en:"abstract",zh:"抽象的；摘要",coll:"abstract concept 抽象概念",ex:"The idea is too abstract to understand.",freq:4},
+{en:"abundant",zh:"丰富的，充裕的",coll:"be abundant in 富含",ex:"The region is abundant in natural resources.",freq:4},
+{en:"academic",zh:"学术的；学院的",coll:"academic research 学术研究",ex:"She has an excellent academic record.",freq:5},
+{en:"accelerate",zh:"加速，促进",coll:"accelerate the pace 加快步伐",ex:"The car accelerated quickly.",freq:4},
+{en:"access",zh:"进入；通道；使用权",coll:"have access to 可以使用",ex:"Students have access to the online library.",freq:5},
+{en:"accommodate",zh:"容纳；提供住宿；适应",coll:"accommodate to 适应",ex:"The hotel can accommodate 500 guests.",freq:4},
+{en:"accompany",zh:"陪伴；伴随",coll:"be accompanied by 由…陪同",ex:"She accompanied me to the hospital.",freq:4},
+{en:"accomplish",zh:"完成，实现",coll:"accomplish a goal 达成目标",ex:"We accomplished our mission on time.",freq:5},
+{en:"account",zh:"账户��说明；占比",coll:"take into account 考虑到",ex:"You must take all factors into account.",freq:5},
+{en:"accumulate",zh:"积累，积聚",coll:"accumulate experience 积累经验",ex:"He accumulated great wealth over the years.",freq:4},
+{en:"accurate",zh:"准确的，精确的",coll:"accurate data 准确数据",ex:"The report provides accurate information.",freq:4},
+{en:"achieve",zh:"达到，取得",coll:"achieve success 取得成功",ex:"She achieved her dream of becoming a doctor.",freq:5},
+{en:"acknowledge",zh:"承认；感谢",coll:"acknowledge the importance 承认重要性",ex:"He acknowledged his mistake.",freq:4},
+{en:"acquire",zh:"获得，习得",coll:"acquire knowledge 获取知识",ex:"It takes time to acquire a new language.",freq:5},
+{en:"adapt",zh:"适应；改编",coll:"adapt to 适应于",ex:"You need to adapt to the new environment.",freq:5},
+{en:"adequate",zh:"足够的；适当的",coll:"adequate supply 充足供应",ex:"We have adequate food for the trip.",freq:4},
+{en:"adjust",zh:"调整，适应",coll:"adjust to 调整以适应",ex:"I need to adjust my schedule.",freq:4},
+{en:"administration",zh:"管理；行政；政府",coll:"business administration 工商管理",ex:"The new administration took office.",freq:4},
+{en:"admire",zh:"钦佩，赞赏",coll:"admire sb for sth 因某事钦佩某人",ex:"I admire her courage and determination.",freq:4},
+{en:"adopt",zh:"采用；收养",coll:"adopt a method 采用一种方法",ex:"The company adopted a new strategy.",freq:5},
+{en:"advance",zh:"前进；进步；预先的",coll:"in advance 提前",ex:"Technology advances rapidly these days.",freq:5},
+{en:"advantage",zh:"优势，有利条件",coll:"take advantage of 利用",ex:"The location gives us a competitive advantage.",freq:5},
+{en:"advertise",zh:"做广告，宣传",coll:"advertise for 为…做广告",ex:"They advertised the job online.",freq:4},
+{en:"affair",zh:"事务；事件",coll:"foreign affairs 外交事务",ex:"This is a matter of public affair.",freq:4},
+{en:"affect",zh:"影响；感动",coll:"be affected by 受…影响",ex:"The weather affects our mood greatly.",freq:5},
+{en:"afford",zh:"负担得起；提供",coll:"can't afford to 负担不起",ex:"I can't afford to buy a new car now.",freq:5},
+{en:"aggressive",zh:"侵略的；好斗的；积极的",coll:"aggressive marketing 积极营销",ex:"He has an aggressive approach to business.",freq:4},
+{en:"agriculture",zh:"农业",coll:"modern agriculture 现代农业",ex:"Agriculture is vital to the economy.",freq:4},
+{en:"aid",zh:"援助，帮助",coll:"with the aid of 在…帮助下",ex:"They provided aid to the disaster victims.",freq:4},
+{en:"aim",zh:"目标；瞄准",coll:"aim at 瞄准；旨在",ex:"The project aims to reduce pollution.",freq:5},
+{en:"alarm",zh:"警报；惊恐",coll:"sound the alarm 拉响警报",ex:"The fire alarm went off at midnight.",freq:4},
+{en:"allow",zh:"允许",coll:"allow sb to do 允许某人做",ex:"My parents don't allow me to stay out late.",freq:5},
+{en:"alternative",zh:"替代的；替代方案",coll:"alternative energy 替代能源",ex:"We need to find alternative solutions.",freq:5},
+{en:"amaze",zh:"使惊奇",coll:"be amazed at 对…感到惊奇",ex:"Her performance amazed the audience.",freq:4},
+{en:"amount",zh:"数量；总额",coll:"a large amount of 大量的",ex:"A huge amount of money was spent.",freq:5},
+{en:"analyze",zh:"分析",coll:"analyze the data 分析数据",ex:"We need to analyze the problem first.",freq:5},
+{en:"announce",zh:"宣布，通告",coll:"announce the result 宣布结果",ex:"The government announced new policies.",freq:4},
+{en:"annual",zh:"年度的，每年的",coll:"annual report 年度报告",ex:"The annual meeting will be held next week.",freq:4},
+{en:"anxiety",zh:"焦虑，忧虑",coll:"anxiety about 对…的焦虑",ex:"She suffers from anxiety about exams.",freq:4},
+{en:"apparent",zh:"明显的，表面上的",coll:"apparent reason 明显的原因",ex:"It became apparent that he was lying.",freq:4},
+{en:"appeal",zh:"呼吁；吸引；上诉",coll:"appeal to 吸引；呼吁",ex:"The charity appealed for donations.",freq:4},
+{en:"apply",zh:"申请；应用",coll:"apply for 申请",ex:"I decided to apply for the scholarship.",freq:5},
+{en:"appreciate",zh:"欣赏；感激；升值",coll:"appreciate your help 感谢你的帮助",ex:"I really appreciate your support.",freq:5},
+{en:"approach",zh:"方法；接近",coll:"approach to …的方法",ex:"We need a new approach to this problem.",freq:5},
+{en:"appropriate",zh:"适当的",coll:"appropriate measures 适当措施",ex:"Is this appropriate for a formal occasion?",freq:4},
+{en:"approve",zh:"批准；赞成",coll:"approve of 赞成",ex:"The committee approved the proposal.",freq:4},
+{en:"argue",zh:"争论；主张",coll:"argue about 争论关于",ex:"They argued about the best solution.",freq:4},
+{en:"arise",zh:"出现，产生",coll:"arise from 由…引起",ex:"Problems may arise during the project.",freq:4},
+{en:"arrange",zh:"安排，整理",coll:"arrange for 安排",ex:"I'll arrange a meeting for tomorrow.",freq:4},
+{en:"aspect",zh:"方面",coll:"in every aspect 在各方面",ex:"We should consider every aspect of the issue.",freq:5},
+{en:"assess",zh:"评估，评定",coll:"assess the impact 评估影响",ex:"We need to assess the situation carefully.",freq:4},
+{en:"assign",zh:"分配；指派",coll:"assign sb to do 指派某人做",ex:"The teacher assigned homework to us.",freq:4},
+{en:"assist",zh:"帮助，协助",coll:"assist sb in doing 帮助某人做",ex:"Can you assist me with this task?",freq:4},
+{en:"associate",zh:"联系；关联",coll:"be associated with 与…有关",ex:"People often associate success with happiness.",freq:4},
+{en:"assume",zh:"假设；承担",coll:"assume responsibility 承担责任",ex:"I assume you've heard the news.",freq:5},
+{en:"atmosphere",zh:"气氛；大气",coll:"friendly atmosphere 友好的氛围",ex:"The restaurant has a romantic atmosphere.",freq:4},
+{en:"attach",zh:"附上；重视",coll:"attach importance to 重视",ex:"Please attach your resume to the email.",freq:4},
+{en:"attempt",zh:"尝试，试图",coll:"make an attempt 尝试",ex:"He attempted to climb the mountain alone.",freq:5},
+{en:"attend",zh:"参加；照料",coll:"attend a meeting 参加会议",ex:"All students must attend the lecture.",freq:5},
+{en:"attitude",zh:"态度，看法",coll:"positive attitude 积极态度",ex:"Your attitude determines your altitude.",freq:5},
+{en:"attract",zh:"吸引",coll:"attract attention 吸引注意",ex:"The exhibition attracted many visitors.",freq:5},
+{en:"authority",zh:"权威；当局",coll:"local authorities 地方当局",ex:"He is an authority on ancient history.",freq:4},
+{en:"available",zh:"可用的；有空的",coll:"be available for 可用于",ex:"The book is available in the library.",freq:5},
+{en:"average",zh:"平均的；普通的",coll:"on average 平均",ex:"On average, I read two books a month.",freq:5},
+{en:"avoid",zh:"避免",coll:"avoid doing 避免做",ex:"Try to avoid making the same mistake.",freq:5},
+{en:"award",zh:"奖励；授予",coll:"win an award 获奖",ex:"She won the award for best actress.",freq:4},
+{en:"aware",zh:"意识到的",coll:"be aware of 意识到",ex:"Are you aware of the risks involved?",freq:5},
+{en:"barrier",zh:"障碍，壁垒",coll:"language barrier 语言障碍",ex:"Language is not a barrier to friendship.",freq:4},
+{en:"benefit",zh:"利益；受益",coll:"benefit from 从…获益",ex:"Everyone can benefit from regular exercise.",freq:5},
+{en:"budget",zh:"预算",coll:"within budget 在预算内",ex:"We need to plan our budget carefully.",freq:4},
+{en:"capable",zh:"有能力的",coll:"be capable of 能够",ex:"She is capable of handling this task.",freq:4},
+{en:"career",zh:"职业，生涯",coll:"career development 职业发展",ex:"He chose teaching as his career.",freq:5},
+{en:"challenge",zh:"挑战",coll:"face a challenge 面对挑战",ex:"This job offers a real challenge.",freq:5},
+{en:"characteristic",zh:"特征；典型的",coll:"distinctive characteristic 显著特征",ex:"What are the characteristics of a good leader?",freq:4},
+{en:"circumstance",zh:"环境，情况",coll:"under the circumstances 在这种情况下",ex:"Under no circumstances should you lie.",freq:4},
+{en:"claim",zh:"声称；索赔",coll:"claim that 声称",ex:"He claims to have seen the accident.",freq:4},
+{en:"communicate",zh:"交流，沟通",coll:"communicate with 与…沟通",ex:"We communicate via email every day.",freq:5},
+{en:"community",zh:"社区；团体",coll:"international community 国际社会",ex:"The local community supported the project.",freq:5},
+{en:"compare",zh:"比较",coll:"compare with/to 与…比较",ex:"Compare this with that one.",freq:5},
+{en:"compete",zh:"竞争",coll:"compete with 与…竞争",ex:"Companies compete for market share.",freq:4},
+{en:"concentrate",zh:"集中，专注",coll:"concentrate on 专注于",ex:"I can't concentrate on my work.",freq:4},
+{en:"concern",zh:"关心；担忧",coll:"be concerned about 关心",ex:"She is concerned about the environment.",freq:5},
+{en:"confirm",zh:"确认，证实",coll:"confirm the reservation 确认预订",ex:"Please confirm your attendance.",freq:4},
+{en:"consequence",zh:"结果，后果",coll:"as a consequence 因此",ex:"Every action has its consequence.",freq:4},
+{en:"consider",zh:"考虑；认为",coll:"consider doing 考虑做",ex:"I'm considering changing my job.",freq:5},
+{en:"consume",zh:"消费；消耗",coll:"consume energy 消耗能量",ex:"We consume too much plastic.",freq:4},
+{en:"contribute",zh:"贡献；捐献",coll:"contribute to 有助于",ex:"Exercise contributes to good health.",freq:5},
+{en:"convince",zh:"说服，使确信",coll:"convince sb of 使某人相信",ex:"He convinced me to join the team.",freq:4},
+{en:"cooperate",zh:"合作",coll:"cooperate with 与…合作",ex:"We should cooperate with each other.",freq:4},
+{en:"create",zh:"创造，创建",coll:"create opportunities 创造机会",ex:"Artists create beauty from imagination.",freq:5},
+{en:"crisis",zh:"危机",coll:"economic crisis 经济危机",ex:"The company survived the financial crisis.",freq:4},
+{en:"culture",zh:"文化",coll:"cultural difference 文化差异",ex:"Learning about other cultures is important.",freq:5},
+{en:"debate",zh:"辩论，讨论",coll:"debate about 关于…的辩论",ex:"They debated the issue for hours.",freq:4},
+{en:"declare",zh:"宣布，声明",coll:"declare war 宣战",ex:"The president declared a state of emergency.",freq:4},
+{en:"decline",zh:"下降；拒绝",coll:"decline an invitation 婉拒邀请",ex:"The population of the town is declining.",freq:4},
+{en:"decrease",zh:"减少，降低",coll:"decrease by 减少了",ex:"The price decreased by 10 percent.",freq:4},
+{en:"demonstrate",zh:"展示；证明；示威",coll:"demonstrate the ability 展示能力",ex:"The experiment demonstrates the theory.",freq:4},
+];
+const ESSAY_TEMPLATES={
+letter:`【书信类万能模板】
+Dear ___,
+
+I am writing to express my ___ (感谢/邀请/申请/建议).
+
+First of all, ___. Moreover, ___. What's more, ___.
+
+I would appreciate it if you could ___. I am looking forward to your early reply.
+
+Yours sincerely,
+Li Hua
+
+【常用句型】
+· I am writing to apply for / invite you to / express my thanks for...
+· I would be grateful if you could...
+· I am looking forward to hearing from you.
+· Please accept my sincere appreciation for...`,
+argument:`【议论文万能模板】
+Recently, the issue of ___ has aroused wide concern. Different people hold different opinions.
+
+Some people argue that ___. They believe that ___. However, others think that ___. They point out that ___.
+
+In my opinion, ___. On one hand, ___. On the other hand, ___. Therefore, ___.
+
+To sum up, ___ is a complex issue. We should ___.
+
+【常用句型】
+· With the development of society,...
+· There is no doubt that...
+· Every coin has two sides.
+· As far as I am concerned,...
+· It is high time that we took effective measures to...`,
+narrative:`【记叙文万能模板】
+It was a ___ (sunny/rainy/cold) day. I still remember the moment when ___.
+
+At first, ___. Then, ___. After that, ___. Finally, ___.
+
+From this experience, I learned that ___. It was really an unforgettable day.
+
+【常用句型】
+· I will never forget the day when...
+· It occurred to me that...
+· To my surprise / joy / disappointment,...
+· Looking back on this experience, I realize that...
+· This experience taught me a valuable lesson.`
+};
+
+function renderWords(){
+  const sort=document.getElementById('wordSort')?.value||'freq';
+  const search=(document.getElementById('wordSearch')?.value||'').toLowerCase();
+  let words=[...WORD_BANK];
+  if(search)words=words.filter(w=>w.en.includes(search)||w.zh.includes(search));
+  if(sort==='freq')words.sort((a,b)=>b.freq-a.freq);
+  else if(sort==='alpha')words.sort((a,b)=>a.en.localeCompare(b.en));
+  else words.sort(()=>Math.random()-0.5);
+  DB=loadDB();const learned=DB.learnedWords||{};
+  let html='';
+  words.forEach(w=>{
+    const isLearned=learned[w.en];
+    html+=`<div class="word-item"><div class="word-left">${w.en} <span style="font-size:11px;color:var(--text-muted)">[${w.freq}★]</span></div><div class="word-mid">${w.zh}<br><span style="font-size:11px;color:var(--text-muted)">${w.coll}</span><br><span style="font-size:11px">${w.ex}</span></div><div class="word-right"><button class="btn-sm ${isLearned?'btn-outline':'btn-primary'}" onclick="toggleWord('${w.en}')">${isLearned?'已学✓':'标记已学'}</button></div></div>`;
+  });
+  document.getElementById('wordList').innerHTML=html;
+}
+function toggleWord(word){
+  DB=loadDB();DB.learnedWords=DB.learnedWords||{};
+  if(DB.learnedWords[word]){delete DB.learnedWords[word];}
+  else{DB.learnedWords[word]=Date.now();}
+  DB.wordReviewQueue=DB.wordReviewQueue||{};
+  DB.wordReviewQueue[word]=Date.now()+24*3600000;
+  saveDB(DB);renderWords();
+}
+function switchEssayTpl(type){
+  document.querySelectorAll('#essayTabLetter,#essayTabArgument,#essayTabNarrative').forEach(b=>b.classList.remove('active'));
+  document.getElementById('essayTab'+type.charAt(0).toUpperCase()+type.slice(1))?.classList.add('active');
+  document.getElementById('essayTplContent').innerHTML=`<div class="essay-tpl-box"><pre>${ESSAY_TEMPLATES[type]}</pre></div>`;
+}
+function exportWords(){
+  DB=loadDB();const learned=DB.learnedWords||{};
+  let text='学位英语已学单词\\n'+'='.repeat(30)+'\\n';
+  WORD_BANK.filter(w=>learned[w.en]).forEach(w=>{text+=`${w.en} | ${w.zh} | ${w.coll}\\n`;});
+  const blob=new Blob([text],{type:'text/plain'});const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='单词_'+today()+'.txt';a.click();
+}
+function startWordReview(){
+  DB=loadDB();const now=Date.now();const queue=DB.wordReviewQueue||{};
+  const reviewWords=WORD_BANK.filter(w=>queue[w.en]&&queue[w.en]<=now);
+  const card=document.getElementById('wordReviewCard');
+  const content=document.getElementById('wordReviewContent');
+  if(reviewWords.length===0){
+    card.style.display='block';content.innerHTML='<div class="empty-state">🎉 没有需要复习的单词，太棒了！</div>';
+    return;
+  }
+  card.style.display='block';
+  let ri=0;const showReview=()=>{
+    if(ri>=reviewWords.length){content.innerHTML='<div class="empty-state">🎉 本轮复习完成！</div>';return;}
+    const w=reviewWords[ri];
+    content.innerHTML=`<div class="word-review-card"><div><div class="wrc-word">${w.en}</div><div class="wrc-hint">${w.coll}</div></div><div><button class="btn btn-primary btn-sm" onclick="reviewNext('${w.en}')">认识 ✓</button><button class="btn btn-outline btn-sm" style="margin-left:4px" onclick="reviewAgain('${w.en}')">不认识</button></div></div>`;
+  };
+  window.reviewNext=function(word){DB=loadDB();DB.wordReviewQueue=DB.wordReviewQueue||{};DB.wordReviewQueue[word]=Date.now()+7*24*3600000;saveDB(DB);ri++;showReview();};
+  window.reviewAgain=function(word){DB=loadDB();DB.wordReviewQueue=DB.wordReviewQueue||{};DB.wordReviewQueue[word]=Date.now()+3600000;saveDB(DB);ri++;showReview();};
+  showReview();
+}
+
+// ========== 高数二 ==========
+const MATH_CHAPTERS=[
+{name:"极限与连续",key:"limits",formulas:["lim(x→0) sin(x)/x = 1","lim(x→∞) (1+1/x)^x = e","lim(x→0) (1+x)^(1/x) = e","lim(x→0) (e^x-1)/x = 1","lim(x→0) ln(1+x)/x = 1","f(x)在x0连续 ⇔ lim(x→x0)f(x)=f(x0)"],
+points:["极限的四则运算法则","两个重要极限","无穷小与无穷大","等价无穷小替换","函数连续的定义与判定","间断点的分类","闭区间上连续函数的性质"]},
+{name:"一元函数微分学",key:"diff",formulas:["(x^n)′=nx^(n-1)","(e^x)′=e^x","(ln x)′=1/x","(sin x)′=cos x","(cos x)′=-sin x","(uv)′=u′v+uv′","(u/v)′=(u′v-uv′)/v²","dy=f′(x)dx"],
+points:["导数的定义与几何意义","基本求导公式","四则运算求导法则","复合函数求导（链式法则）","隐函数求导","高阶导数","微分中值定理","洛必达法则","函数的单调性与极值","曲线的凹凸性与拐点","函数的最值问题"]},
+{name:"一元函数积分学",key:"integral",formulas:["∫x^n dx=x^(n+1)/(n+1)+C","∫e^x dx=e^x+C","∫1/x dx=ln|x|+C","∫sin x dx=-cos x+C","∫cos x dx=sin x+C","∫[a,b] f(x)dx=F(b)-F(a)","∫u dv=uv-∫v du"],
+points:["不定积分的概念与性质","基本积分公式","换元积分法（凑微分）","分部积分法","定积分的概念与性质","牛顿-莱布尼茨公式","定积分的换元与分部","反常积分","定积分的几何应用（面积、体积）"]},
+{name:"多元函数微积分",key:"multi",formulas:["∂f/∂x = lim(Δx→0)[f(x+Δx,y)-f(x,y)]/Δx","dz=(∂z/∂x)dx+(∂z/∂y)dy","∬f(x,y)dxdy","∂²f/∂x∂y=∂²f/∂y∂x"],
+points:["多元函数的概念","偏导数的定义与计算","全微分的概念","复合函数的偏导数","隐函数的偏导数","二重积分的概念与计算","直角坐标系下二重积分","极坐标系下二重积分"]},
+{name:"概率论初步",key:"prob",formulas:["P(A∪B)=P(A)+P(B)-P(AB)","P(A|B)=P(AB)/P(B)","P(AB)=P(A)P(B)（独立）","E(X)=∑xi·pi","D(X)=E(X²)-[E(X)]²","P{X=k}=C(n,k)p^k(1-p)^(n-k)"],
+points:["随机事件与概率","条件概率与乘法公式","全概率公式与贝叶斯公式","事件的独立性","离散型随机变量及其分布","连续型随机变量及其分布","数学期望与方差","二项分布","正态分布"]}
+];
+function renderMath(){
+  let chHtml='';MATH_CHAPTERS.forEach((ch,i)=>{
+    chHtml+=`<button class="${i===0?'active':''}" onclick="switchMathChapter(${i})">${ch.name}</button>`;
+  });
+  document.getElementById('mathChapters').innerHTML=chHtml;
+  switchMathChapter(0);
+  renderWrongQs();
+}
+function switchMathChapter(idx){
+  document.querySelectorAll('#mathChapters button').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  const ch=MATH_CHAPTERS[idx];
+  let html=`<div class="subsection-title">📐 核心公式</div>`;
+  ch.formulas.forEach(f=>{html+=`<div class="formula-box">${f}<button class="btn btn-sm btn-outline" style="float:right" onclick="toggleFormulaFav('${f.replace(/'/g,"\\'")}')">${isFormulaFav(f)?'★':'☆'}</button></div>`;});
+  html+=`<div class="subsection-title">📝 知识点</div>`;
+  ch.points.forEach(p=>{html+=`<div class="knowledge-item"><span style="color:var(--accent-deep)">▸</span> ${p}</div>`;});
+  document.getElementById('mathContent').innerHTML=html;
+}
+function toggleFormulaFav(formula){
+  DB=loadDB();DB.formulaFavs=DB.formulaFavs||[];
+  const idx=DB.formulaFavs.indexOf(formula);
+  if(idx>-1)DB.formulaFavs.splice(idx,1);else DB.formulaFavs.push(formula);
+  saveDB(DB);renderFormulaFavs();const btns=document.querySelectorAll('#mathContent .formula-box button');
+  btns.forEach(b=>{if(b.textContent.startsWith('★'))b.textContent='☆';});
+  renderMath();
+}
+function isFormulaFav(f){DB=loadDB();return (DB.formulaFavs||[]).includes(f);}
+function renderFormulaFavs(){
+  DB=loadDB();const favs=DB.formulaFavs||[];
+  document.getElementById('formulaFavList').innerHTML=favs.length===0?'<div class="empty-state">还没有收藏公式，去高数页面点击 ☆ 收藏吧~</div>':favs.map(f=>`<div class="formula-box">${f}</div>`).join('');
+}
+function toggleFormulaModal(){
+  document.getElementById('formulaModal').classList.toggle('show');
+  if(document.getElementById('formulaModal').classList.contains('show'))renderFormulaFavs();
+}
+// 错题本
+function addWrongQ(){document.getElementById('wrongQForm').style.display='block';}
+function saveWrongQ(){
+  const title=document.getElementById('wqTitle').value.trim();
+  if(!title)return alert('请输入题目描述');
+  DB=loadDB();DB.mathWrongQs=DB.mathWrongQs||[];
+  DB.mathWrongQs.push({title,chapter:document.getElementById('wqChapter').value,diff:document.getElementById('wqDiff').value,date:today(),id:Date.now()});
+  saveDB(DB);document.getElementById('wqTitle').value='';document.getElementById('wrongQForm').style.display='none';renderWrongQs();
+}
+function deleteWrongQ(id){
+  DB=loadDB();DB.mathWrongQs=(DB.mathWrongQs||[]).filter(q=>q.id!==id);saveDB(DB);renderWrongQs();
+}
+function renderWrongQs(){
+  DB=loadDB();const qs=DB.mathWrongQs||[];
+  if(qs.length===0){document.getElementById('wrongQList').innerHTML='<div class="empty-state">暂无错题记录~</div>';return;}
+  // Group by chapter
+  const groups={};qs.forEach(q=>{if(!groups[q.chapter])groups[q.chapter]=[];groups[q.chapter].push(q);});
+  let html='';
+  Object.entries(groups).forEach(([ch,items])=>{
+    html+=`<div class="subsection-title">${ch} (${items.length}题)</div>`;
+    items.forEach(q=>{html+=`<div class="wrong-q-item"><span class="diff-tag ${q.diff}">${q.diff==='basic'?'基础':'进阶'}</span><span style="flex:1">${q.title}</span><span style="font-size:11px;color:var(--text-muted)">${fmtDate(q.date)}</span><button class="btn-danger btn-sm" onclick="deleteWrongQ(${q.id})">删除</button></div>`;});
+  });
+  document.getElementById('wrongQList').innerHTML=html;
+}
+
+// ========== 政治 ==========
+const POL_MODULES=[
+{name:"马克思主义哲学",key:"marx",points:[
+"哲学基本问题：思维与存在的关系","物质与意识的辩证关系","唯物辩证法的三大规律：对立统一、量变质变、否定之否定",
+"实践是认识的基础","真理的客观性、绝对性与相对性","社会存在与社会意识的辩证关系",
+"生产力与生产关系的矛盾运动","经济基础与上层建筑的矛盾运动","人民群众是历史的创造者"
+]},
+{name:"毛泽东思想",key:"mao",points:[
+"毛泽东思想是马克思主义中国化的第一次历史性飞跃","新民主主义革命理论","社会主义改造理论",
+"实事求是是毛泽东思想的活的灵魂","群众路线","独立自主",
+"农村包围城市、武装夺取政权的革命道路","三大法宝：统一战线、武装斗争、党的建设"
+]},
+{name:"中国特色社会主义理论",key:"soc",points:[
+"邓小平理论：什么是社会主义、怎样建设社会主义","三个代表重要思想","科学发展观",
+"社会主义本质：解放生产力，发展生产力","一个中心、两个基本点","社会主义初级阶段理论",
+"社会主义市场经济理论","一国两制"
+]},
+{name:"习近平新时代中国特色社会主义思想",key:"xi",points:[
+"八个明确与十四个坚持","中国梦：国家富强、民族振兴、人民幸福","两个一百年奋斗目标",
+"五位一体总体布局","四个全面战略布局","新发展理念：创新、协调、绿色、开放、共享",
+"人类命运共同体","一带一路倡议","高质量发展","中国式现代化","全过程人民民主",
+"全面从严治党","国家安全观","文化自信"
+]},
+];
+const POL_ANSWER_TEMPLATES=[
+{title:"简答题通用模板",content:"1. 明确回答问题的核心概念\n2. 分点阐述（一般3-5点）\n3. 每点先写原理再结合实际\n4. 最后总结升华"},
+{title:"论述题通用模板",content:"一、引言（1-2句点题，阐述问题的重要性）\n二、理论依据（阐述相关原理，引用马克思主义基本观点）\n三、分析论证（分3-4个角度深入分析）\n四、联系实际（结合当前国情、时事）\n五、总结（概括核心观点，升华主题）"},
+{title:"时事分析题模板",content:"1. 概述事件背景\n2. 分析事件体现的政治原理\n3. 联系相关政策和理论\n4. 指出事件的意义和影响\n5. 表达自己的正确立场"}
+];
+
+function renderPolitics(){
+  // Theory chapters
+  let chHtml='';POL_MODULES.forEach((m,i)=>{chHtml+=`<button class="${i===0?'active':''}" onclick="switchPolModule(${i})">${m.name}</button>`;});
+  document.getElementById('polChapters').innerHTML=chHtml;
+  switchPolModule(0);
+  // Templates
+  let tplHtml='';POL_ANSWER_TEMPLATES.forEach(t=>{
+    tplHtml+=`<div class="knowledge-item"><div class="k-title">${t.title}</div><pre style="white-space:pre-wrap;font-size:12px;line-height:1.7">${t.content}</pre></div>`;
+  });
+  document.getElementById('polTemplates').innerHTML=tplHtml;
+  // Shizheng
+  renderShizhengMonths();
+  renderShizheng('2025-7');
+  renderPolCalendar();
+}
+function switchPolModule(idx){
+  document.querySelectorAll('#polChapters button').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  const m=POL_MODULES[idx];let html='';
+  m.points.forEach(p=>{html+=`<div class="knowledge-item"><span style="color:var(--accent-deep)">▸</span> ${p}</div>`;});
+  document.getElementById('polContent').innerHTML=html;
+}
+
+// ========== 时事政治数据（来自PDF 2025.7-2026.6）==========
+const SHIZHENG_DATA={
+"2025-7":{domestic:[
+"《求是》发表习近平文章《团结奋斗是中国人民创造历史伟业的必由之路》",
+"2025上合组织数字经济论坛在天津举办，主题为“数字经济新纽带 共拓合作新空间”",
+"习近平主持召开中央财经委员会第六次会议，研究全国统一大市场建设、海洋经济高质量发展",
+"中央政治局就落实中央八项规定精神进行第二十一次集体学习",
+"中华全国青年联合会第十四届委员会全体会议在京开幕",
+"2025全球数字经济大会在北京开幕，主题为“建设数字友好城市”",
+"第十三届世界和平论坛在京举行，主题为“共促世界和平与繁荣：共担、共享、共赢”",
+"2025年中国航海日主场活动在海南博鳌举行",
+"习近平向92岁入党的国家话剧院一级演员游本昌转达勉励",
+"第二届全国文物行业职业技能大赛在四川泸州举行",
+"李强在里约热内卢出席金砖国家领导人第十七次会晤",
+"习近平在山西考察，强调推动资源型经济转型发展",
+"第十一届尼山世界文明论坛在曲阜举办",
+"国产电磁弹射航母福建舰下水，首艘国产大型邮轮运营，C919商业飞行",
+"全球文明对话部长级会议在北京开幕",
+"西夏陵列入《世界遗产名录》，中国世界遗产总数达60项",
+"2025国际基础科学大会在北京开幕",
+"中央城市工作会议在京举行，提出建设现代化人民城市",
+"第三届中国国际供应链促进博览会在北京举行",
+"2025上半年GDP 660536亿元，同比增长5.3%",
+"2025上合组织国际投资贸易博览会在青岛开幕",
+"渤海首个亿吨级岩性油田——垦利10-2油田群投产",
+"蔡旭哲获二级航天功勋奖章，宋令东、王浩泽获英雄航天员称号",
+"2025上合组织国家文明对话在天津开幕",
+"徐淙祥被授予“时代楷模”称号",
+"2025世界互联网大会数字丝路发展论坛在泉州开幕",
+"2025国际粮食减损大会在济南开幕",
+"2025世界人工智能大会以“智能时代 同球共济”为主题",
+"2024年我国“三新”经济增加值242908亿元，占GDP18.01%"
+],international:[
+"欧洲航天局观测到可能来自太阳系外的'星际访客'",
+"马斯克宣布成立“美国党”",
+"王毅出席中国-东盟外长会，介绍双方合作成果",
+"乌克兰正式批准暂时退出《渥太华禁雷公约》",
+"清华火神队获机器人世界杯人形组冠军"
+]},
+"2025-8":{domestic:[
+"中国海军第四艘075型两栖攻击舰湖北舰入列",
+"浙大脑机智能实验室发布新一代类脑计算机DarwinMonkey",
+"国务院发布逐步推行免费学前教育意见",
+"中办国办印发整治形式主义为基层减负若干规定",
+"嫦娥六号团队获2025年度世界航天奖",
+"揽月月面着陆器着陆起飞综合验证试验完成",
+"2025世界机器人大会在北京开幕",
+"首批5个国家公园全部完成确权登记",
+"我国海水产品产量连续多年全球第一",
+"5G基站总数达455万个，千兆宽带用户2.26亿户",
+"永川页岩气田新增探明储量1245.88亿立方米",
+"第三个全国生态日，主题为“绿水青山就是金山银山”",
+"2025世界人形机器人运动会在北京开幕",
+"2025成都世运会中国队36金17银11铜居金牌榜首位",
+"十四五时期我国体育健儿取得世界冠军519个",
+"习近平率中央代表团出席西藏自治区成立60周年庆祝活动",
+"宁夏-湖南±800千伏特高压直流输电工程投产",
+"嫦娥六号月壤研究精确测定阿波罗盆地形成于41.6亿年前",
+"2025中国算力大会在大同开幕，智能算力达788EFLOPS",
+"我国成为全球157个国家和地区前三大贸易伙伴",
+"全球首座超阶零碳建筑在青岛投用",
+"2025年快递业务量有望超2000亿件，连续12年世界第一",
+"第十五届中国-东北亚博览会在长春举办",
+"江门中微子实验成功完成2万吨液体闪烁体灌注",
+"2025中国国际大数据产业博览会在贵阳开幕",
+"第七届中阿博览会在银川开幕",
+"高等教育学科专业设置调整优化行动方案发布"
+],international:[
+"2025墨子量子奖授予量子模拟领域三位科学家",
+"法国友人向中方捐赠抗战历史照片",
+"OpenAI发布GPT-5",
+"2026-2027跳水世界杯将在中国北京等地举办",
+"王毅强调8月15日日本战败投降的历史意义",
+"第五届中蒙博览会在呼和浩特开幕",
+"世界首个基因编辑猪肺移植脑死亡人体案例发表"
+]},
+"2025-9":{domestic:[
+"《关于推动城市高质量发展的意见》发布",
+"2025上合组织天津峰会举行，规模最大的一次",
+"习近平在上合组织+会议上提出五点全球治理倡议",
+"习近平同普京会谈，中俄树立大国关系典范",
+"纪念抗战胜利80周年大会在京举行",
+"金上-湖北±800千伏特高压工程向湖北送电",
+"2025世界智能产业博览会，习近平致贺信",
+"第三届中国工业高质量发展论坛在沈阳举办",
+"2025全球工业互联网大会在沈阳开幕",
+"第三届深空探测国际会议提出小行星探测构想",
+"第二十五届中国国际投资贸易洽谈会在厦门举办",
+"中国连续16年保持东盟第一大贸易伙伴",
+"十四五期间制造业增加值增量预计达8万亿元",
+"2025中国国际服务贸易交易会在北京开幕",
+"新建黄岩岛国家级自然保护区获批",
+"中国4个灌溉工程入选世界灌溉工程遗产，总数达42项",
+"中国世界遗产达60项，世界文化遗产41项",
+"第22届东博会在南宁举办",
+"习近平致贺中国致公党成立100周年",
+"九一八事变94周年撞钟鸣警仪式在沈阳举行",
+"第三届全国技能大赛在郑州开赛",
+"2025世界制造业大会在合肥开幕",
+"我国银行业总资产近470万亿元世界第一",
+"重庆检察未成年人保护团队获时代楷模",
+"第八个中国农民丰收节，全国主场在山东招远",
+"2025北京文化论坛开幕",
+"习近平参观新疆维吾尔自治区成立70周年成就展",
+"习近平在联合国气候变化峰会发表视频致辞",
+"大青山、周至入选世界生物圈保护区",
+"贵州花江峡谷大桥通车，新世界第一高桥",
+"习近平对党校工作作出重要指示"
+],international:[
+"纪念抗战胜利80周年图片展在俄罗斯开幕",
+"香港世界人才排名跃升至全球第四",
+"《渔业补贴协定》正式生效",
+"中国就联合国改革提出五点建议",
+"成里京获阿勒福赞奖",
+"王朝朝获东京世锦赛男子20公里竞走银牌",
+"韩国向4名中国海警代表授予荣誉道民称号",
+"英国、加拿大、澳大利亚宣布承认巴勒斯坦国",
+"第80届联合国大会一般性辩论呼吁加沙停火",
+"第二十届孔子教育奖在曲阜颁发"
+]},
+"2025-10":{domestic:[
+"习近平给天津大学全体师生回信",
+"《求是》发表《中华民族共同体的形成和发展》",
+"蛟龙号实现我国首次北极冰区载人深潜",
+"习近平出席全球妇女峰会并提出四点建议",
+"李强主持召开经济形势专家和企业家座谈会",
+"第138届广交会在广州举办，展位7.46万个创新高",
+"玲龙一号一回路冷态功能试验成功",
+"我国制造业增加值连续15年全球第一",
+"中国4个乡村入选2025年最佳旅游乡村，总数达19个",
+"习近平致电郑丽文祝贺当选中国国民党主席",
+"国务院同意设立全民阅读活动周",
+"习近平出席APEC第32次领导人非正式会议",
+"习近平向APEC工商领导人峰会发表书面演讲"
+],international:[
+"2025诺贝尔物理学奖授予量子物理学家",
+"中国第23批赴黎维和部队获联合国和平勋章",
+"2025诺贝尔化学奖授予金属有机框架开发者",
+"2025诺贝尔经济学奖授予创新驱动经济增长理论学者",
+"2025世界粮食论坛在罗马开幕",
+"高市早苗当选日本第104任首相，首位女首相",
+"第三届亚洲青年运动会中国队金牌榜第一",
+"中国6项遗产获全球重要农业文化遗产授牌",
+"无锡获世界音乐之都，泉州获世界美食之都"
+]},
+"2025-11":{domestic:[
+"习近平出席APEC第二阶段会议，提出3点建议",
+"人形机器人夸父成为十五运会0号火炬手",
+"第八届进博会在上海开幕",
+"2025世界互联网大会乌镇峰会举行",
+"李强对推进农田水利和高标准农田建设作出批示",
+"福建舰入列授旗仪式在三亚举行",
+"第十五届全运会在广州开幕，首次粤港澳联合举办",
+"江苏队获十五运会首金",
+"《习近平经济思想概论》出版",
+"习近平致贺中越两党理论研讨会",
+"习近平复信青年汉学家",
+"纪念孙中山诞辰159周年",
+"辽宁发现国内首个千吨级超大型金矿",
+"076两栖攻击舰首舰四川舰启航",
+"拉索首次探测到微类星体超高能伽马射线信号",
+"嫦娥六号发现月球土壤也会生锈",
+"习近平对全面依法治国作出重要指示",
+"纪念胡耀邦诞辰110周年座谈会",
+"第七届中俄能源商务论坛举办",
+"联合国声援巴勒斯坦人民国际日",
+"《新时代的中国军控、裁军与防扩散》白皮书发布",
+"重庆半山环道加氢站运行1500天",
+"现代农业产业园总产值超3万亿元",
+"中国志愿服务联合会第三届会员代表大会",
+"2025世界智能制造大会在南京开幕",
+"中央政治局审议巡视报告并学习网络生态治理"
+],international:[
+"中美经贸磋商达成成果共识，暂停部分加征关税",
+"中集来福士为挪威建造LNG汽车运输船",
+"中方就中东无核武器区提出三点主张",
+"G20峰会在南非约翰内斯堡举行，首次在非洲大陆",
+"郎平获国际奥委会教练员终身成就奖",
+"中欧班列累计开行突破12万列",
+"中国学生首次参加联合国青年环境大会"
+]},
+"2025-12":{domestic:[
+"第十二个国家宪法日，主题为学习宣传贯彻习近平法治思想",
+"宁波舟山港集装箱吞吐量突破4000万标准箱",
+"国务院进行第十七次专题学习",
+"习近平对各民主党派提出3点希望",
+"李强同国际经济组织负责人举行1+10对话会",
+"吉木萨尔国家级陆相页岩油示范区年产量突破170万吨",
+"我国有效发明专利超500万件，PCT国际专利申请连续6年全球第一",
+"2026年APEC非正式高官会在深圳举行",
+"第十二个南京大屠杀死难者国家公祭日",
+"流花油田二次开发项目全面投产",
+"习近平对未成年人思想道德建设作出指示",
+"新疆粮食单产蝉联全国第一",
+"黑龙江粮食总产量连续16年全国第一",
+"《求是》发表《扩大内需是战略之举》",
+"三峡江苏大丰海上风电全容量并网",
+"第十二届残特奥会在深圳闭幕",
+"海南自由贸易港正式启动全岛封关",
+"金上-湖北特高压直流工程建成投运",
+"全球首台商用超临界CO2发电机组在六盘水商运",
+"渤海油田年产量突破4000万吨",
+"习近平对中央企业工作作出重要指示",
+"全球首制甲醇双燃料智能超大型油轮交付",
+"渤海再获亿吨级大发现秦皇岛29-6油田",
+"天山胜利隧道通车，世界最长高速公路隧道",
+"新修订国家通用语言文字法通过",
+"新疆油田年注碳突破100万吨",
+"习近平对三农工作作出重要指示"
+],international:[
+"梁文锋和杜梦然入选自然杂志年度十大科学人物",
+"全球治理之友小组在联合国启动",
+"杭州获2027年U20亚洲杯承办权",
+"中国通过INSARAG国家认证",
+"《联合国可转让货物单证公约》通过",
+"波罗的海三国退出渥太华禁雷公约"
+]},
+"2026-1":{domestic:[
+"深海一号完成第100船原油外输",
+"全国铁路营业里程16.5万公里，高铁超5万公里",
+"宁波舟山港货物吞吐量超14亿吨，连续17年全球第一",
+"长江干线港口货物吞吐量达42亿吨",
+"我国首次航天员洞穴训练在重庆武隆完成",
+"我国成为全球第一航空人口大国",
+"中央政治局常委会研究十五五规划",
+"上海港集装箱吞吐量突破5506万标箱",
+"习近平复信美国青少年教育交流团",
+"2026中非人文交流年开幕",
+"AS700载人飞艇完成全国首次商业飞行",
+"习近平在二十届中央纪委五次全会上发表讲话",
+"第六届亚洲沙滩运动会将在三亚举行",
+"汽车产销量连续17年全球第一",
+"江苏徐圩核能供热发电厂开工",
+"2025年GDP 1401879亿元首次突破140万亿，增长5.0%",
+"全国居民人均可支配收入43377元",
+"城镇新增就业1267万人",
+"商业航天完成发射50次，入轨卫星311颗",
+"退休人员基本养老金提高2%",
+"陈冬成为首个在轨超400天的中国航天员",
+"电动汽车充电设施突破2000万个",
+"粮食产量14298亿斤再创历史新高",
+"卫星互联网低轨19组卫星成功发射",
+"山东成全国第三个GDP突破10万亿省份",
+"深圳南山区成中国首个GDP过万亿市辖区",
+"十四五建成全球最大清洁电力供应体系",
+"2025年度十大科技热词发布",
+"中国对外投资存量连续9年世界前三",
+"习近平同阿尔及利亚总统互致贺电祝贺遥感三号卫星发射成功",
+"中央政治局集体学习未来产业"
+],international:[
+"中韩贸易稳步增长",
+"印尼首只大熊猫幼仔诞生",
+"中国蝉联匈牙利最大外资来源国",
+"中国与中亚贸易首次突破1000亿美元",
+"世界经济论坛2026年年会在达沃斯开幕",
+"《海洋生物多样性协定》生效",
+"中国海军医院船首次停靠乌拉圭",
+"中智联合探索阿塔卡马海沟",
+"U23男足亚洲杯中国队创历史最佳战绩",
+"羲和二号计划2028-2029年发射"
+]},
+"2026-2":{domestic:[
+"造船三大指标连续16年全球领先",
+"《求是》发表《走好中国特色金融发展之路》",
+"2026年中央一号文件发布，十五五首个",
+"全球首款混合动力无人运输机彩虹YH-1000S首飞",
+"2025年中国考古新成果发布",
+"粮食产量14298亿斤，肉类产量首超1亿吨",
+"宁忠岩和张楚桐担任米兰冬奥会中国旗手",
+"河南GDP达66633亿元",
+"董亦军被追授时代楷模称号",
+"习近平在北京亦庄考察科技创新",
+"国务院进行AI+专题学习",
+"长征十号火箭首次初样飞行试验成功",
+"习近平对国家自然科学基金委工作作出指示",
+"雄安高新区升级为国家高新区",
+"我国首次海上运载火箭搜索回收完成",
+"习近平复信美国艾奥瓦州友人",
+"米兰冬奥会中国队创境外参赛历史最好成绩",
+"我国在轨遥感卫星超640颗",
+"习近平会见德国总理默茨",
+"2025年GDP 1401879亿元增长5.0%"
+],international:[
+"俄美《新削减战略武器条约》到期",
+"中国银行伦敦分行担任英国人民币清算行",
+"全球治理之友小组49成员共同发言捍卫联合国宪章",
+"王毅出席联合国人权理事会提出五点主张"
+]},
+"2026-3":{domestic:[
+"十四五完成水利建设投资5.68万亿元",
+"十四届全国人大四次会议开幕，GDP目标4.5%-5%",
+"生态环境法典草案提请审议",
+"习近平看望政协委员，强调2035年建成健康中国",
+"2026年最美巾帼奋斗者发布",
+"首艘集成式大型压裂工程船交付",
+"生态环境法典通过，2026年8月15日施行",
+"习近平复信法国中文班师生",
+"神舟二十一号完成出舱活动",
+"第二艘国产大型邮轮爱达花城号出坞",
+"2026中关村论坛年会主题为科技创新与产业创新深度融合",
+"国际森林日主题为森林与经济",
+"习近平考察雄安新区",
+"中国发展高层论坛2026年年会开幕",
+"2026全球南方金融家论坛举办",
+"2025年度中国科学十大进展发布",
+"四川发现世界第二大轻稀土矿",
+"博鳌亚洲论坛2026年年会举行",
+"全国中小学生安全教育周",
+"世界数据组织成立大会在京举行"
+],international:[
+"米兰冬残奥会中国队创境外最佳成绩",
+"中智阿塔卡马海沟联合科考完成",
+"习近平致电祝贺通伦连任老挝国家主席",
+"博鳌论坛预计2026年亚洲经济增速4.5%",
+"首个国际太极拳日庆祝活动在巴黎举行",
+"巴斯夫广东一体化基地全面投产",
+"上合组织圆桌会议召开"
+]},
+"2026-4":{domestic:[
+"《求是》发表《树立和践行正确政绩观》",
+"第35个全国税收宣传月",
+"四所交通大学共同迎来建校130周年",
+"中国首次南极冰层热水钻探突破世界纪录",
+"郑丽文率国民党访问团参访大陆",
+"服务业增加值首次突破80万亿占GDP57.7%",
+"全国服务业大会召开",
+"习近平会见郑丽文，国共领导人时隔10年再会",
+"习近平致贺中美乒乓外交55周年",
+"我国首个海上注碳增气项目开工",
+"第六届消博会在海南举办",
+"2026世界互联网大会亚太峰会在香港开幕",
+"网络直播打赏规范管理通知发布",
+"第十一个全民国家安全教育日",
+"三亚亚沙会中国代表团成立",
+"全球最大纯电动集装箱海船投入运营",
+"一季度GDP 334193亿元增长5.0%",
+"浙江常山和四川四姑娘山成为世界地质公园",
+"神舟二十一号航天员刷新出舱纪录",
+"第十一个中国航天日主题为七秩问天路",
+"第五届全民阅读大会在南昌举办",
+"粤港澳大湾区首台华龙一号投产",
+"第57个世界地球日",
+"习近平同莫桑比克总统会谈提升为命运共同体",
+"首批外籍航天员入选，2名巴基斯坦籍",
+"义乌发展经验被习近平肯定",
+"我国发明专利有效量超500万件",
+"单杏花被授予时代楷模称号",
+"第四届中国安徽科交会开幕",
+"第26个世界知识产权日",
+"中央政治局分析经济形势",
+"上合组织绿色和可持续发展论坛在宁波开幕",
+"2025年度全国十大考古新发现揭晓",
+"第九届数字中国建设峰会在福州开幕"
+],international:[
+"中国牵头组建壁画保护国际标准工作组",
+"阿尔忒弥斯2号打破人类距地球最远飞行纪录",
+"柬埔寨上达岱抽水蓄能电站开工",
+"雅万高铁发送旅客突破1500万人次",
+"中老铁路故事会在万象举办",
+"中美乒乓外交55周年纪念活动",
+"中国与赞比亚签署发展合作协定"
+]},
+"2026-5":{domestic:[
+"美丽中国建设成效考核办法印发",
+"第28届北京科博会举办",
+"本源悟空-180量子计算机上线运行",
+"7名青年运动员获中国青年五四奖章",
+"2026年职业教育活动周启动",
+"2026世界数字教育大会在杭州举行",
+"世界首次太空人类人工胚胎实验",
+"四川资阳东峰页岩气田探明储量2356.87亿方",
+"九章四号量子计算机刷新世界纪录",
+"全国生育友好城市创建管理办法公布",
+"习近平同特朗普会谈，构建中美建设性战略稳定关系",
+"第十届中俄博览会主题为信任合作共赢",
+"首座海上移动式多功能措施平台启运",
+"2026全球贸易投资促进峰会举行",
+"2026中国网络文明大会在南宁举行",
+"中俄睦邻友好合作条约继续延期",
+"2026文化强国建设高峰论坛在深圳举办",
+"国际生物多样性日主题为护一方生灵",
+"习近平向塞尔维亚总统颁授友谊勋章",
+"华为发布韬定律，中国半导体首次提出新原则",
+"2026世界智能产业博览会将在天津举办",
+"习近平复信中美青年友谊行学生",
+"垦利10-2油田群开发项目全面投产",
+"世界最大海上换流站发运",
+"超碳一号示范工程全面建成"
+],international:[
+"王毅同伊朗外长会谈提出四点主张",
+"中国-中亚人权发展论坛在塔什干举行",
+"2026非洲核能创新峰会在基加利开幕",
+"第79届世界卫生大会主题为重塑全球健康",
+"中巴建交75周年",
+"塞尔维亚总统武契奇访华",
+"中奥建交55周年"
+]},
+"2026-6":{domestic:[
+"习近平给中共一大纪念馆红领巾讲解员回信",
+"城市更新十五五规划印发",
+"加快农业农村现代化十五五规划印发",
+"第三届世界汉学家大会在敦煌开幕",
+"世界环境日主题为全面绿色转型",
+"现代化应急体系建设十五五规划印发",
+"三峡水运新通道破土动工",
+"崇启公铁长江大桥合龙",
+"中格建交34周年提升为全面战略伙伴关系",
+"2026全球人权治理高端论坛在京举行",
+"孙颖莎和谷爱凌入选时代百大体育影响力人物",
+"纯电拖轮首次实现与电网双向互动",
+"第十八届海峡论坛在厦门举行",
+"2026年文化和自然遗产日主题为文物属于人民",
+"文物01星成功发射",
+"国务院进行第二十次专题学习",
+"第四届链博会在北京举办",
+"李强在大连调研强调发展高端装备制造业",
+"第十七届夏季达沃斯发布十大新兴技术",
+"习近平在山东考察强调农业农村现代化",
+"中国超算灵晟再次登顶全球500强榜首",
+"政协常委会以高质量发展为议题",
+"民族团结进步促进法通过",
+"注册会计师法修改决定通过",
+"新修订商标法通过",
+"第九届中国-亚欧博览会在乌鲁木齐举办",
+"杭台高铁累计客流突破1亿人次",
+"异算方舟国产计算系统软件生态平台上线"
+],international:[
+"韩正会见巴西外长",
+"梅西C罗奥乔亚将第六次征战世界杯",
+"第八届中美友城大会在旧金山举行",
+"习近平参谒中朝友谊塔",
+"第二届世界古典学大会在雅典开幕",
+"中方就推进中东和平提出四点主张",
+"张雪机车获WSBK赛季第六冠",
+"2026美加墨世界杯开幕",
+"中欧班列东通道累计突破4万列",
+"中国设立妈祖奖学金助力气象防灾减灾",
+"国际奥委会修改奥林匹克宪章"
+]}
+};
+// Sort months chronologically
+const SZ_MONTHS=["2025-7","2025-8","2025-9","2025-10","2025-11","2025-12","2026-1","2026-2","2026-3","2026-4","2026-5","2026-6"];
+let currentSzMonth='2025-7';
+
+function renderShizhengMonths(){
+  let html='';SZ_MONTHS.forEach(m=>{
+    const label=m.replace('2025-','25年').replace('2026-','26年')+'月';
+    html+=`<button class="month-tab${m===currentSzMonth?' active':''}" onclick="renderShizheng('${m}')">${label}</button>`;
+  });
+  document.getElementById('szMonthTabs').innerHTML=html;
+}
+function renderShizheng(month){
+  currentSzMonth=month;
+  renderShizhengMonths();
+  const data=SHIZHENG_DATA[month];
+  if(!data){document.getElementById('szContent').innerHTML='<div class="empty-state">暂无该月数据</div>';return;}
+  let html=`<div class="subsection-title">🇨🇳 国内时事</div>`;
+  data.domestic.forEach((item,i)=>{html+=`<div class="shizheng-item"><span class="sz-num">${i+1}.</span>${item}</div>`;});
+  html+=`<div class="subsection-title" style="margin-top:16px">🌐 国际时事</div>`;
+  data.international.forEach((item,i)=>{html+=`<div class="shizheng-item"><span class="sz-num">${i+1}.</span>${item}</div>`;});
+  document.getElementById('szContent').innerHTML=html;
+}
+function filterShizheng(){
+  const kw=document.getElementById('szSearch').value.trim().toLowerCase();
+  if(!kw){renderShizheng(currentSzMonth);return;}
+  let html='';let count=0;
+  SZ_MONTHS.forEach(month=>{
+    const data=SHIZHENG_DATA[month];if(!data)return;
+    const matchDom=data.domestic.filter(item=>item.toLowerCase().includes(kw));
+    const matchInt=data.international.filter(item=>item.toLowerCase().includes(kw));
+    if(matchDom.length+matchInt.length===0)return;
+    html+=`<div class="subsection-title">${month.replace('2025-','2025年').replace('2026-','2026年')}月</div>`;
+    matchDom.forEach(item=>{html+=`<div class="shizheng-item">${item}</div>`;count++;});
+    matchInt.forEach(item=>{html+=`<div class="shizheng-item" style="color:var(--accent-deep)">🌐 ${item}</div>`;count++;});
+  });
+  document.getElementById('szContent').innerHTML=html||`<div class="empty-state">未找到"${kw}"相关时事</div>`;
+}
+
+// ========== 政治测验 + 日历 ==========
+function startPolQuiz(){
+  const card=document.getElementById('polQuizCard');
+  const content=document.getElementById('polQuizContent');
+  card.style.display='block';
+  // Build quiz from shizheng data
+  let questions=[];
+  SZ_MONTHS.forEach(month=>{
+    const data=SHIZHENG_DATA[month];if(!data)return;
+    data.domestic.forEach(item=>{
+      // Extract key words as answer
+      const words=item.replace(/[，。、；：""《》（）\d\.\s]/g,' ').split(' ').filter(w=>w.length>=3&&w.length<=8);
+      if(words.length>=3){
+        const ans=words[Math.floor(Math.random()*Math.min(3,words.length))];
+        const q=item.replace(ans,'___');
+        if(q!==item){
+          let opts=[ans];
+          // Get distractors from other items
+          SZ_MONTHS.forEach(m2=>{
+            const d2=SHIZHENG_DATA[m2];if(!d2||m2===month)return;
+            d2.domestic.forEach(i2=>{
+              const w2=i2.replace(/[，。、；：""《》（）\d\.\s]/g,' ').split(' ').filter(w=>w.length>=3&&w.length<=8&&w!==ans);
+              if(w2.length&&opts.length<4)opts.push(w2[Math.floor(Math.random()*w2.length)]);
+            });
+          });
+          while(opts.length<4)opts.push('以上都不是');
+          opts=opts.slice(0,4).sort(()=>Math.random()-0.5);
+          questions.push({q,ans,opts});
+        }
+      }
+    });
+  });
+  questions=questions.sort(()=>Math.random()-0.5).slice(0,10);
+  let qi=0,score=0;
+  const showQ=()=>{
+    if(qi>=questions.length){content.innerHTML=`<div style="text-align:center;padding:20px"><div style="font-size:24px;margin-bottom:8px">🎉</div><div style="font-size:18px;color:var(--text-title);font-weight:700">测试完成！得分：${score}/${questions.length}</div><div style="font-size:13px;color:var(--text-muted);margin-top:4px">${score>=8?'太厉害了！时事达人！🌸':score>=5?'不错哦，继续加油！💪':'多看看时事，下次会更好！📚'}</div><button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="startPolQuiz()">再来一次</button></div>`;return;}
+    const q=questions[qi];
+    content.innerHTML=`<div class="quiz-box"><div class="quiz-q">${qi+1}. ${q.q}</div><div class="quiz-opts">${q.opts.map((o,i)=>`<label><input type="radio" name="quizOpt" value="${o.replace(/"/g,'&quot;')}" onchange="checkPolQuiz('${q.ans.replace(/'/g,"\\'")}',this)"> ${o}</label>`).join('')}</div><div class="quiz-result" id="quizResult${qi}"></div></div>`;
+  };
+  window.checkPolQuiz=function(ans,el){
+    const result=document.getElementById('quizResult'+qi);
+    if(el.value===ans){result.textContent='✅ 正确！';result.className='quiz-result correct';score++;}
+    else{result.textContent='❌ 正确答案：'+ans;result.className='quiz-result wrong';}
+    setTimeout(()=>{qi++;showQ();},1200);
+  };
+  showQ();
+}
+// 政治打卡日历 - 月份状态
+let polCalYear=new Date().getFullYear();
+let polCalMonth=new Date().getMonth();
+function renderPolCalendar(){
+  const year=polCalYear,month=polCalMonth;
+  const firstDay=new Date(year,month,1).getDay();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  // 周一起始：0=周一...6=周日
+  let startCol=firstDay-1;if(startCol<0)startCol=6;
+  const headers=['一','二','三','四','五','六','日'];
+  DB=loadDB();const checkins=DB.polCheckins||{};
+  let html='<div class="calendar-grid">';
+  headers.forEach((h,i)=>{
+    const weekendCls=i>=5?' weekend header':' header';
+    html+=`<div class="calendar-day${weekendCls}">${h}</div>`;
+  });
+  for(let i=0;i<startCol;i++)html+='<div class="calendar-day empty"></div>';
+  const now=new Date();
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const checked=checkins[ds];
+    const isToday=(year===now.getFullYear()&&month===now.getMonth()&&d===now.getDate());
+    const dow=new Date(year,month,d).getDay();
+    const isWeekend=(dow===0||dow===6);
+    let cls='calendar-day';
+    if(checked)cls+=' checked';
+    if(isToday)cls+=' today';
+    if(isWeekend)cls+=' weekend';
+    html+=`<div class="${cls}" onclick="togglePolCheckin('${ds}')" title="${checked?'已背诵':'点击打卡'}">${d}</div>`;
+  }
+  html+='</div>';
+  document.getElementById('polCalendar').innerHTML=html;
+  document.getElementById('polCalTitle').textContent=`${year}年${month+1}月`;
+  // 统计
+  let monthCount=0,total=0;
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    if(checkins[ds])monthCount++;
+  }
+  Object.values(checkins).forEach(v=>{if(v)total++;});
+  document.getElementById('polCalMonthCount').textContent=monthCount;
+  document.getElementById('polCalTotal').textContent=total;
+  updatePolStreak();
+  document.getElementById('polCalStreak').textContent=DB.polStreak||0;
+}
+function polCalChangeMonth(delta){
+  polCalMonth+=delta;
+  if(polCalMonth<0){polCalMonth=11;polCalYear--;}
+  else if(polCalMonth>11){polCalMonth=0;polCalYear++;}
+  renderPolCalendar();
+}
+function polCalGoToday(){
+  const now=new Date();
+  polCalYear=now.getFullYear();
+  polCalMonth=now.getMonth();
+  renderPolCalendar();
+}
+function togglePolCheckin(date){
+  DB=loadDB();DB.polCheckins=DB.polCheckins||{};
+  DB.polCheckins[date]=!DB.polCheckins[date];saveDB(DB);
+  updatePolStreak();renderPolCalendar();
+}
+function updatePolStreak(){
+  DB=loadDB();const checkins=DB.polCheckins||{};
+  let streak=0;const d=new Date();
+  while(true){
+    const ds=d.toISOString().slice(0,10);
+    if(checkins[ds]){streak++;d.setDate(d.getDate()-1);}
+    else break;
+  }
+  DB.polStreak=streak;DB.polLastDate=today();saveDB(DB);
+}
+
+// ========== 任务 ==========
+function renderTasks(){
+  DB=loadDB();const td=today();const checks=DB.taskChecks||{};
+  const isWeekday=getWeekday(td);
+  let html='';
+  (DB.tasks||[]).forEach((t,i)=>{
+    if(t.repeat==='weekday'&&!isWeekday)return;
+    const done=checks[td+'_'+i];
+    html+=`<label class="task-check${done?' done':''}" onclick="toggleTask(${i})"><input type="checkbox" ${done?'checked':''}>${t.title} <span style="font-size:10px;color:var(--text-muted)">[${t.repeat==='daily'?'每天':t.repeat==='weekday'?'工作日':'一次性'}]</span><button class="btn-danger btn-sm" style="margin-left:auto" onclick="event.stopPropagation();deleteTask(${i})">删除</button></label>`;
+  });
+  document.getElementById('taskList').innerHTML=html||'<div class="empty-state">还没有任务，快来添加吧~</div>';
+}
+function addTask(){
+  const title=document.getElementById('taskTitle').value.trim();
+  if(!title)return alert('请输入任务名称');
+  const repeat=document.getElementById('taskRepeat').value;
+  DB=loadDB();DB.tasks=DB.tasks||[];DB.tasks.push({title,repeat});
+  saveDB(DB);document.getElementById('taskTitle').value='';renderTasks();
+}
+function toggleTask(i){
+  DB=loadDB();const td=today();DB.taskChecks=DB.taskChecks||{};
+  DB.taskChecks[td+'_'+i]=!DB.taskChecks[td+'_'+i];saveDB(DB);renderTasks();
+}
+function deleteTask(i){
+  DB=loadDB();DB.tasks.splice(i,1);saveDB(DB);renderTasks();
+}
+function resetTodayTasks(){
+  if(!confirm('确定重置今日所有任务？'))return;
+  DB=loadDB();const td=today();DB.taskChecks=DB.taskChecks||{};
+  DB.tasks.forEach((t,i)=>{delete DB.taskChecks[td+'_'+i];});
+  saveDB(DB);renderTasks();
+}
+
+// ========== 日记 ==========
+function renderDiary(){
+  document.getElementById('diaryDate').value=today();
+  DB=loadDB();const diaries=DB.diaries||[];
+  diaries.sort((a,b)=>b.date.localeCompare(a.date));
+  let html='';
+  diaries.forEach(d=>{
+    html+=`<div class="card" style="padding:12px"><div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">${d.date} · ${d.title||'无标题'}</div><div style="font-size:13px;color:var(--text-section);white-space:pre-wrap">${d.content.substring(0,200)}${d.content.length>200?'...':''}</div><button class="btn-danger btn-sm" style="margin-top:6px" onclick="deleteDiary('${d.id}')">删除</button></div>`;
+  });
+  document.getElementById('diaryHistory').innerHTML=html||'<div class="empty-state">还没有日记记录~</div>';
+}
+function saveDiary(){
+  const date=document.getElementById('diaryDate').value;
+  const title=document.getElementById('diaryTitle').value.trim();
+  const content=document.getElementById('diaryContent').value.trim();
+  if(!content)return alert('请输入日记内容');
+  DB=loadDB();DB.diaries=DB.diaries||[];
+  DB.diaries.push({id:Date.now().toString(),date,title,content});
+  saveDB(DB);document.getElementById('diaryContent').value='';document.getElementById('diaryTitle').value='';renderDiary();
+}
+function deleteDiary(id){
+  if(!confirm('确定删除这篇日记？'))return;
+  DB=loadDB();DB.diaries=(DB.diaries||[]).filter(d=>d.id!==id);saveDB(DB);renderDiary();
+}
+function useDiaryTpl(type){
+  const tpls={
+    daily:'📅 每日复盘\n\n✅ 今日完成：\n1. \n2. \n3. \n\n❌ 未完成：\n1. \n\n💡 今日收获：\n\n🔧 需要改进：\n',
+    weekly:'📊 每周总结\n\n🏆 本周成就：\n1. \n2. \n\n⚠️ 遇到的问题：\n\n📝 经验教训：\n\n📋 下周计划：\n1. \n2. \n3. \n',
+    monthly:'🗓️ 月度回顾\n\n🎯 本月目标完成情况：\n\n📈 学习进度：\n\n💰 财务总结：\n收入：\n支出：\n结余：\n\n🌟 本月高光时刻：\n\n📋 下月目标：\n1. \n2. \n3. \n',
+    study:'📚 学习复盘\n\n📖 今日学习内容：\n\n✅ 掌握程��：\n□ 完全掌握\n□ 基本理解\n□ 需要复习\n\n⚠️ 薄弱环节：\n\n📝 笔记要点：\n\n🎯 明日学习计划：\n'
+  };
+  document.getElementById('diaryContent').value=tpls[type]||'';
+}
+
+// ========== 设置 ==========
+function renderSettings(){
+  // Reflect current settings
+  DB=loadDB();const s=DB.settings||{};
+  document.querySelectorAll('#fontSizeGroup button').forEach(b=>b.classList.toggle('active',b.dataset.val===s.fontSize));
+  document.querySelectorAll('#cardGapGroup button').forEach(b=>b.classList.toggle('active',b.dataset.val===s.cardGap));
+}
+function setFontSize(size){
+  document.body.setAttribute('data-fontsize',size);
+  DB=loadDB();DB.settings=DB.settings||{};DB.settings.fontSize=size;saveDB(DB);renderSettings();
+}
+function setCardGap(gap){
+  document.body.setAttribute('data-cardgap',gap);
+  DB=loadDB();DB.settings=DB.settings||{};DB.settings.cardGap=gap;saveDB(DB);renderSettings();
+}
+function exportAllData(){
+  DB=loadDB();const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='志雯工作台_备份_'+today()+'.json';a.click();
+}
+function importAllData(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!confirm('确认导入数据？当前数据将被覆盖！'))return;
+      saveDB(data);DB=data;alert('数据导入成功！请刷新页面以查看最新数据');location.reload();
+    }catch(ex){alert('文件格式错误，请选择正确的备份文件');}
+  };
+  reader.readAsText(file);
+}
+function resetAllData(){
+  if(!confirm('⚠️ 确定要重置所有数据吗？此操作不可恢复！\n\n建议先导出备份。'))return;
+  if(!confirm('再次确认：真的要删除所有数据吗？'))return;
+  localStorage.removeItem(DB_KEY);DB=getDefaultDB();saveDB(DB);alert('数据已重置');location.reload();
+}
+
+// ========== 初始化 ==========
+function init(){
+  DB=loadDB();
+  // Apply saved settings
+  const s=DB.settings||{};
+  if(s.fontSize)document.body.setAttribute('data-fontsize',s.fontSize);
+  if(s.cardGap)document.body.setAttribute('data-cardgap',s.cardGap);
+  // Set today's date for inputs
+  const dateInputs=document.querySelectorAll('input[type="date"]');
+  dateInputs.forEach(inp=>{if(!inp.value)inp.value=today();});
+  // Render initial dashboard
+  renderDashboard();
+  // Init word review on load
+  renderWords();
+  // Init daily essay TTS
+  initTTS();
+}
+// Run on load
+window.addEventListener('DOMContentLoaded',init);
+// 窗口大小变化时重置侧边栏状态
+window.addEventListener('resize',function(){
+  const sb=document.getElementById('sidebar');
+  const overlay=document.getElementById('mobileOverlay');
+  const main=document.querySelector('.main-content');
+  const isMobile=window.innerWidth<=768;
+  sb.classList.remove('open','hidden-desktop');
+  overlay.classList.remove('show');
+  if(!isMobile)main.style.marginLeft='';
+});
+
+// ========== 学位英语：每日短文 + TTS 听力跟读 ==========
+const DAILY_ESSAYS=[
+{topic:"教育",eng:"In today's rapidly changing world, lifelong learning has become more important than ever before. The knowledge we acquire in school is no longer sufficient for a lifetime career. Technology evolves at an unprecedented pace, and new skills are constantly in demand. Adults who continue to learn stay competitive in the job market and adaptable to change. Moreover, learning keeps our minds active and engaged, which is beneficial for mental health. As the saying goes, one is never too old to learn.",chn:"在当今快速变化的世界中，终身学习变得比以往任何时候都更加重要。我们在学校里学到的知识已不足以支撑一生的职业生涯。技术以前所未有的速度发展，新技能的需求不断涌现。持续学习的成年人能在就业市场中保持竞争力，并适应变化。俗话说，活到老，学到老。"},
+{topic:"教育",eng:"Online education has grown rapidly in recent years, offering flexibility and convenience to learners worldwide. Unlike traditional classrooms, online courses allow students to study at their own pace and schedule. This is particularly beneficial for working adults who need to balance study with career and family responsibilities. However, online education also has its challenges. Some students struggle with self-discipline without the structure of a physical classroom. In my view, the best approach is a hybrid model that combines the flexibility of online learning with the social benefits of traditional classrooms.",chn:"近年来在线教育发展迅速，为全球学习者提供了灵活性和便利性。与传统课堂不同，在线课程允许学生按照自己的节奏学习。这对于需要平衡工作和家庭的成人尤为有益。然而，在线教育也有挑战，一些学生缺乏自律。最好的方法是混合模式，结合在线学习的灵活性和传统课堂的社交优势。"},
+{topic:"教育",eng:"Self-study is a powerful tool for personal growth, especially for adults pursuing higher education through self-taught examinations. It requires strong motivation, discipline, and effective time management. Unlike students in traditional schools, self-learners must create their own study plans and evaluate their progress independently. This process builds not only knowledge but also valuable life skills such as perseverance and problem-solving ability. Many successful people have achieved their goals through self-study, proving that formal schooling is not the only path to success.",chn:"自学是个人成长的有力工具，尤其对于通过自考追求高等教育的成年人而言。它需要强烈的动力、自律和有效的时间管理。自学者必须自己制定学习计划并独立评估进度。这个过程不仅积累知识，还培养了毅力和解决问题能力。许多成功人士通过自学实现了目标，证明正规教育并非成功唯一途径。"},
+{topic:"科技",eng:"Smartphones have fundamentally changed the way we live, work, and communicate. With a small device in our pockets, we can access information and connect with people across the world. However, this convenience comes at a cost. Many people spend hours each day scrolling through social media, leading to reduced productivity and strained relationships. The constant notifications interrupt our focus and make deep work increasingly difficult. To build a healthier relationship with our phones, we should set boundaries such as turning off non-essential notifications. Technology should serve us, not control us.",chn:"智能手机从根本上改变了我们生活、工作和交流的方式。然而这种便利是有代价的。许多人每天花数小时浏览社交媒体，导致生产力下降和人际关系紧张。持续不断的通知打断我们的注意力。为了与手机建立更健康的关系，我们应该设定边界，例如关闭非必要的通知。技术应该为我们服务，而不是控制我们。"},
+{topic:"科技",eng:"Artificial intelligence is transforming the future of work in ways we are only beginning to understand. While AI can automate repetitive tasks and improve efficiency, it also raises concerns about job displacement. However, history shows that technological advances typically create new types of jobs even as they eliminate old ones. The key for workers is to develop skills that machines cannot easily replicate, such as creativity, critical thinking, and emotional intelligence. The future belongs to those who can work alongside AI, not compete against it.",chn:"人工智能正在以我们刚刚开始理解的方式改变未来的工作。虽然AI可以自动化重复性任务并提高效率，但它也引发了对就业替代的担忧。然而历史表明，技术进步在消除旧岗位的同时通常会创造新类型的工作。关键是发展机器难以复制的技能，如创造力、批判性思维和情商。未来属于那些能与AI协作的人。"},
+{topic:"科技",eng:"Social media has revolutionized interpersonal communication, allowing us to stay connected with friends and family regardless of distance. However, excessive use of social media can negatively affect the quality of our relationships. People often present idealized versions of their lives online, which can lead to social comparison and feelings of inadequacy. Moreover, virtual interactions may replace face-to-face conversations, reducing the depth of our connections. To maintain healthy relationships, we should use social media mindfully and prioritize real-world interactions.",chn:"社交媒体彻底改变了人际交流，使我们能够不分距离地与亲友保持联系。然而过度使用社交媒体可能会影响人际关系质量。人们在网上经常展示理想化的生活，这可能导致社会比较和不足感。此外，虚拟互动可能取代面对面交谈，降低我们联系的深度。我们应有意识地使用社交媒体，并优先考虑现实互动。"},
+{topic:"科技",eng:"Online shopping has become an integral part of modern life, offering unparalleled convenience and choice. With a few clicks, consumers can compare prices, read reviews, and have products delivered to their doorsteps. However, the ease of purchasing can lead to impulsive buying and overspending. Furthermore, the inability to physically examine products before purchase sometimes results in disappointment. Privacy and security issues also remain a concern. To shop wisely online, consumers should set budgets, research products thoroughly, and only use reputable platforms.",chn:"网购已成为现代生活不可或缺的一部分，提供了无与伦比的便利和选择。然而购买的便捷性可能导致冲动消费和超支。此外，购买前无法亲自检查商品有时会令人失望。隐私和安全问题也是许多网购者关注的焦点。要明智地网购，消费者应设定预算、充分研究产品，并只使用信誉良好的平台。"},
+{topic:"科技",eng:"The digital divide between generations has become increasingly apparent in our technology-driven society. Young people navigate digital tools with ease, while many older adults struggle with basic tasks such as using mobile payments or video calling. This gap can lead to social isolation and unequal access to services. Bridging the digital divide requires patience and effort from both sides. Younger people can help older family members learn digital skills step by step, while communities can offer training programs tailored to seniors. Technology should be inclusive.",chn:"在我们这个技术驱动的社会中，代际数字鸿沟日益明显。年轻人能轻松使用数字工具，而许多老年人在使用移动支付或视频通话等基本任务上仍有困难。这种差距可能导致社会孤立。弥合数字鸿沟需要双方的耐心和努力。年轻人可以帮助年长的家庭成员逐步学习数字技能，社区也可以提供针对老年人的培训项目。"},
+{topic:"社会",eng:"The aging population is one of the most significant demographic challenges facing China today. Advances in healthcare and declining birth rates have led to a growing proportion of elderly citizens. This shift places pressure on the pension system, healthcare services, and the working-age population. Many elderly people also face loneliness and lack of care, especially those whose children have moved to cities for work. Addressing this issue requires a comprehensive approach involving government, communities, and families.",chn:"人口老龄化是当今中国面临的最重大人口挑战之一。医疗保健的进步和出生率的下降导致老年公民比例不断增长。这种转变给养老金体系、医疗服务以及劳动年龄人口带来了压力。许多老年人还面临孤独和缺乏照顾的问题。解决这个问题需要政府、社区和家庭的综合努力。"},
+{topic:"社会",eng:"Achieving work-life balance has become increasingly difficult in modern society. With smartphones and remote work, the boundary between professional and personal life often blurs. Many employees find themselves answering work emails late at night or working through weekends. This constant connectivity can lead to stress, burnout, and strained relationships. A healthy work-life balance is essential for long-term well-being and productivity. Employers should respect employees' personal time, and individuals must learn to set boundaries and prioritize self-care.",chn:"在现代社会中，实现工作与生活的平衡变得越来越困难。随着智能手机和远程办公的普及，职业生活与个人生活之间的界限常常模糊。这种持续的联系可能导致压力、倦怠和人际关系紧张。健康的工作生活平衡对于长期的幸福感和生产力至关重要。雇主应尊重员工的个人时间，个人也必须学会设定边界。"},
+{topic:"社会",eng:"The rising cost of higher education has become a major concern for families across the country. Tuition fees have increased far faster than average incomes, putting significant financial strain on households. Many students graduate with substantial debt, which delays their ability to buy homes or start families. Some question whether a university degree is still worth the investment. While education remains valuable, there is growing recognition that alternative paths such as vocational training can also lead to successful careers.",chn:"高等教育费用的上涨已成为全国家庭关注的重大问题。学费的增长速度远超平均收入，给家庭带来了巨大的经济压力。许多学生毕业时背负着沉重的债务。一些人质疑大学学位是否仍值得投资。虽然教育仍然有价值，但人们越来越认识到职业培训等替代途径同样可以通向成功的职业。"},
+{topic:"社会",eng:"Volunteering plays a vital role in building a healthy and compassionate society. By donating their time and skills, volunteers support causes ranging from education and healthcare to environmental protection. The benefits of volunteering extend beyond the communities being served. Volunteers themselves gain valuable experience, develop new skills, and experience the satisfaction of making a difference. For young people, volunteering can build character and provide perspective on social issues. Despite our busy lives, even a few hours of volunteer work each month can create positive change.",chn:"志愿服务在建设健康和有爱心的社会中发挥着至关重要的作用。志愿者支持从教育、医疗到环境保护等各种事业。志愿服务的益处超越了被服务的社区。志愿者本身也获得宝贵经验、发展新技能，并体验改变带来的满足感。尽管生活忙碌，每月即使只有几小时的志愿工作也能创造积极的改变。"},
+{topic:"社会",eng:"Food safety remains a critical concern for public health. Incidents of contaminated food, illegal additives, and poor hygiene practices have undermined consumer confidence in recent years. The consequences of food safety violations can be severe, ranging from immediate illness to long-term health problems. Ensuring food safety requires cooperation among government regulators, food producers, and consumers. The government must enforce strict standards, producers should prioritize safety over profit, and consumers can protect themselves by choosing reputable brands.",chn:"食品安全仍然是公共健康的一个关键问题。近年来，食品污染、非法添加剂和卫生不良等事件削弱了消费者的信心。食品安全违规的后果可能很严重，从即时的疾病到长期的健康问题。确保食品安全需要政府监管者、食品生产者和消费者的合作。政府必须执行严格的标准，生产者应将安全置于利润之上。"},
+{topic:"社会",eng:"The housing problem in big cities has become increasingly severe as urbanization continues. Skyrocketing prices and rents make it difficult for ordinary workers to find affordable housing. Many are forced to live in small, crowded apartments or commute long distances from the suburbs. This housing crisis not only affects quality of life but also discourages talent from staying in major cities. The government should increase the supply of affordable public housing and regulate speculative buying.",chn:"随着城市化的持续，大城市的住房问题变得日益严重。飙升的房价和租金使普通工人难以找到负担得起的住房。许多人被迫住在狭小拥挤的公寓里或从郊区长途通勤。这场住房危机不仅影响生活质量，还阻碍了人才留在大城市。政府应增加经济适用房的供应并规范投机性购房。"},
+{topic:"文化",eng:"Traditional Chinese festivals carry deep cultural significance and serve as important occasions for family reunion. Spring Festival symbolizes the beginning of a new year and the renewal of hope. Mid-Autumn Festival celebrates harvest and family unity under the full moon. Dragon Boat Festival commemorates the ancient poet Qu Yuan and promotes health and courage. These festivals are not merely holidays but living traditions that connect generations and preserve cultural identity. It is our responsibility to pass on the true values of these festivals to younger generations.",chn:"中国传统节日具有深厚的文化意义，是家庭团聚的重要时刻。春节象征着新年的开始和希望的更新。中秋节在满月下庆祝丰收和家庭团圆。端午节纪念古代诗人屈原，倡导健康和勇气。这些节日不仅是假期，更是连接代际、保护文化认同的活传统。我们有责任将这些节日的真正价值传承给年轻一代。"},
+{topic:"文化",eng:"The preservation of cultural heritage in modern times faces unprecedented challenges. Rapid urbanization often leads to the demolition of historic buildings and neighborhoods. Traditional crafts risk disappearing as young people pursue more profitable modern careers. Furthermore, globalization threatens the uniqueness of local cultures by promoting a homogenized global lifestyle. Despite these challenges, cultural heritage is not a relic of the past but a living connection to our identity. Governments should establish stronger legal protections for historical sites.",chn:"在现代社会，文化遗产的保护面临前所未有的挑战。快速城市化常导致历史建筑和街区的拆除。随着年轻人追求更有利可图的现代职业，传统工艺面临消失的风险。全球化通过推广同质化的全球生活方式，威胁着地方文化的独特性。文化遗产不是过去的遗物，而是与我们身份的有生命的联系。"},
+{topic:"文化",eng:"Cultural differences between China and the West are fascinating and sometimes challenging. In social interactions, Chinese culture emphasizes harmony, indirectness, and respect for hierarchy, while Western culture tends to value directness, individuality, and equality. At the dining table, Chinese meals are typically shared from common dishes, symbolizing collectivism, whereas Western meals are individually plated. Understanding these differences is essential in our increasingly interconnected world. Rather than judging which approach is superior, we should appreciate the strengths of each culture.",chn:"中西方文化差异既令人着迷，有时也具有挑战性。在社交互动中，中国文化强调和谐、含蓄和对等级的尊重，而西方文化倾向于重视直接、个性和平等。在餐桌上，中餐通常从共享菜肴中取食，象征集体主义，而西餐是个人分盘的。在我们日益互联的世界中，理解这些差异至关重要。我们不应判断哪种方式更优越。"},
+{topic:"文化",eng:"The popularity of Chinese language worldwide has grown remarkably in recent years. As China's economic and political influence expands, more people recognize the value of learning Mandarin. Confucius Institutes and online platforms have made Chinese language education accessible to learners across the globe. For foreign students, mastering Chinese opens doors to studying and working in China. However, learning Chinese is notoriously challenging due to its tonal system and character-based writing. Despite these difficulties, the number of Chinese learners continues to rise.",chn:"近年来，汉语在全球的普及显著增长。随着中国经济和政治影响力的扩大，越来越多的人认识到学习普通话的价值。孔子学院和在线平台使全球学习者都能获得汉语教育。对外国学生来说，掌握汉语为在中国学习和工作打开了大门。然而，由于声调系统和以字符为基础的书写，学习汉语是出了名的具有挑战性。"},
+{topic:"环境",eng:"Environmental protection is not solely the responsibility of governments and corporations. Individual actions, when multiplied across millions of people, can have a profound impact on the environment. Simple habits such as reducing plastic use, sorting waste, conserving water, and choosing public transportation all contribute to a healthier planet. Many people mistakenly believe that their personal efforts are too small to matter, but this mindset prevents meaningful change. By making conscious decisions in our daily lives, each of us can play a part in protecting the earth.",chn:"环境保护不仅仅是政府和企业的事。当个人行动在数百万人中累积时，可以对环境产生深远的影响。减少塑料使用、垃圾分类、节约用水、选择公共交通等简单习惯都有助于建设一个更健康的地球。许多人错误地认为个人努力太小而不重要，但这种心态阻碍了有意义的改变。通过在日常生活中做出有意识的决定，我们每个人都能在保护地球方面发挥作用。"},
+{topic:"环境",eng:"Urban pollution has become a pressing challenge for cities around the world. Air pollution from vehicles and factories threatens public health, causing respiratory diseases. Water pollution from industrial waste contaminates rivers and groundwater. Noise pollution from traffic and construction affects mental well-being and sleep quality. Addressing urban pollution requires determined action on multiple fronts. Cities should invest in clean public transportation, enforce strict emission standards, and increase green spaces that naturally filter pollutants.",chn:"城市污染已成为世界各地城市面临的紧迫挑战。来自车辆和工厂的空气污染威胁着公共健康，导致呼吸系统疾病。工业废水造成的水污染污染了河流和地下水。交通和建筑产生的噪音污染影响心理健康和睡眠质量。解决城市污染需要在多个方面采取坚决行动。城市应投资清洁公共交通、执行严格的排放标准。"},
+{topic:"环境",eng:"Renewable energy offers a promising path toward sustainable development. Unlike fossil fuels, which are finite and polluting, sources such as solar, wind, and hydroelectric power are clean and endlessly replenished. As technology improves and costs decrease, renewable energy is becoming increasingly competitive. China has made remarkable progress in this field, becoming the world's largest producer of solar panels and wind turbines. The transition to renewable energy not only reduces greenhouse gas emissions but also creates new jobs and industries.",chn:"可再生能源为可持续发展提供了一条有前景的道路。与有限且污染的化石燃料不同，太阳能、风能和水能等来源是清洁的且无尽补充的。随着技术进步和成本降低，可再生能源与传统能源的竞争力日益增强。中国在这一领域取得了显著进展，成为世界最大的太阳能电池板和风力涡轮机生产国。向可再生能源转型不仅减少温室气体排放，还创造了新的就业和产业。"},
+{topic:"环境",eng:"Climate change is arguably the greatest global challenge of our time. Rising temperatures, melting glaciers, and more frequent extreme weather events are clear evidence of a warming planet. The consequences are far-reaching, threatening food security, water supplies, and the very existence of some coastal communities. While climate change is a global problem, its impacts are unevenly distributed, with developing countries often bearing the heaviest burden. Addressing climate change requires unprecedented international cooperation and concrete actions from every nation.",chn:"气候变化可以说是我们这个时代最大的全球挑战。气温上升、冰川融化和更频繁的极端天气事件是地球变暖的明显证据。其后果影响深远，威胁粮食安全、水资源供应，甚至一些沿海社区的生存。虽然气候变化是一个全球性问题，但其影响分布不均，发展中国家往往承受最重的负担。应对气候变化需要前所未有的国际合作。"},
+{topic:"健康",eng:"Physical exercise is not only beneficial for the body but also essential for mental health. Regular activity releases endorphins, natural chemicals that boost mood and reduce feelings of stress and anxiety. Studies have shown that people who exercise regularly are less likely to suffer from depression and tend to have better sleep quality. For busy adults, finding time to exercise can be challenging, but even thirty minutes of moderate activity such as walking can make a significant difference. The key is consistency rather than intensity.",chn:"体育锻炼不仅对身体有益，而且对心理健康至关重要。规律的活动会释放内啡肽，这是一种能提升情绪并减少压力和焦虑感的天然化学物质。研究表明，经常锻炼的人患抑郁症的可能性更小，睡眠质量也更好。对于忙碌的成年人来说，找到锻炼时间可能具有挑战性，但即使三十分钟的中等活动也能产生显著的效果。关键是坚持而非强度。"},
+{topic:"健康",eng:"Maintaining healthy eating habits in a fast-paced world is challenging but crucial. Busy schedules often lead people to rely on fast food, processed snacks, and irregular meal times. Over time, these habits can contribute to obesity, heart disease, and other chronic health problems. A healthy diet should include a variety of fruits, vegetables, whole grains, and lean proteins. Preparing meals at home gives us control over ingredients and portion sizes. Small changes, such as drinking more water and eating slowly, can also make a big difference.",chn:"在快节奏的世界中保持健康的饮食习惯具有挑战性但至关重要。忙碌的日程常常导致人们依赖快餐、加工零食和不规律的用餐时间。久而久之，这些习惯可能导致肥胖、心脏病和其他慢性健康问题。健康的饮食应包括各种水果、蔬菜、全谷物和瘦肉蛋白。在家做饭让我们可以控制食材和份量。一些小的改变也能带来很大的不同。"},
+{topic:"健康",eng:"Sleep deprivation has become a widespread problem among modern adults. Between demanding jobs, family responsibilities, and the temptation of digital entertainment, many people regularly sacrifice sleep to squeeze more into their days. However, chronic sleep loss has serious consequences. It impairs cognitive function, weakens the immune system, and increases the risk of conditions such as heart disease. Most adults need seven to eight hours of sleep per night. Improving sleep hygiene, such as maintaining a regular schedule and avoiding screens before bedtime, can significantly enhance sleep quality.",chn:"睡眠不足已成为现代成年人中普遍存在的问题。在繁重的工作、家庭责任和数字娱乐的诱惑之间，许多人经常牺牲睡眠。然而，长期的睡眠缺失会带来严重后果。它会损害认知功能，削弱免疫系统，并增加心脏病等疾病的风险。大多数成年人每晚需要七到八小时的睡眠。改善睡眠卫生，如保持规律的睡眠时间表和避免睡前使用电子屏幕，可以显著提高睡眠质量。"},
+{topic:"个人成长",eng:"Procrastination is a common struggle that prevents many people from reaching their full potential. We often delay important tasks in favor of more pleasant activities, only to feel guilty as deadlines approach. Overcoming procrastination begins with understanding its root causes, which often include fear of failure, perfectionism, or feeling overwhelmed. Several strategies can help. Breaking large tasks into smaller steps makes them less intimidating. The two-minute rule suggests doing immediately any task that takes less than two minutes. Forgiving yourself for past procrastination allows you to move forward.",chn:"拖延症是一种常见的困扰，阻碍了许多人发挥全部潜力。我们经常将重要任务推迟，转而选择更愉快的活动，结果在截止日期临近时感到内疚。克服拖延症首先要了解其根本原因，通常包括对失败的恐惧、完美主义或被任务压倒。有几种策略可以帮助解决。将大任务分解为更小的步骤。两分钟法则建议立即做任何耗时不超过两分钟的任务。原谅自己过去的拖延，让你能够重新开始。"},
+{topic:"个人成长",eng:"Failure is often viewed as something to be avoided, but it plays an essential role in personal growth. Every successful person has experienced failures along their journey. What sets them apart is not the absence of failure but the ability to learn from it and persist. Failure teaches us humility, resilience, and valuable lessons that success cannot provide. When we fail, we are forced to examine our approach and develop better strategies. By reframing failure as a natural and necessary part of learning, we can develop a growth mindset that embraces challenges.",chn:"失败常被视为应该避免的东西，但它在个人成长中扮演着不可或缺的角色。每个成功人士在他们的旅程中都经历过失败。使他们与众不同的不是没有失败，而是从中学习并坚持下去的能力。失败教会我们谦逊、韧性和成功无法提供的宝贵教训。当我们失败时，我们被迫审视自己的方法并制定更好的策略。通过将失败重新定义为学习的自然部分，我们可以培养成长心态。"},
+{topic:"个人成长",eng:"Time management is a critical skill for busy adults juggling work, family, and personal development. Without effective time management, it is easy to feel overwhelmed and fail to accomplish important goals. One useful framework is the Eisenhower Matrix, which categorizes tasks by urgency and importance. Another effective technique is time blocking, where specific periods are dedicated to particular tasks, minimizing distractions. Setting clear priorities each morning and reviewing progress each evening can create a sense of control. Saying no to non-essential commitments is necessary for protecting time.",chn:"时间管理是忙碌的成年人兼顾工作、家庭和个人发展的关键技能。没有有效的时间管理，很容易感到不堪重负。一个有用的框架是艾森豪威尔矩阵，它按紧急性和重要性对任务进行分类。另一个有效的技巧是时间块，即将特定时段专门用于特定任务。每天早上设定明确的优先事项，每晚回顾进度，可以创造掌控感。对非必要的承诺说不对于保护时间来说是必要的。"},
+{topic:"社会现象",eng:"The phenomenon of involution among young people has drawn widespread attention. It refers to a situation where individuals compete intensely in a zero-sum game, putting in more effort without necessarily achieving better outcomes. Young people feel pressured to work longer hours, earn higher degrees, and accumulate more credentials, yet find that the rewards for their efforts keep diminishing. This relentless competition leads to exhaustion, anxiety, and a sense of meaninglessness. Addressing this issue requires systemic changes and a cultural shift that values well-being over constant competition.",chn:"近年来年轻人中的内卷现象引起了广泛关注。它指的是个人在零和博弈中激烈竞争，付出更多努力却不一定能获得更好结果的情况。年轻人感到被迫工作更长时间、获得更高学位、积累更多证书，却发现努力的回报不断减少。这种无情的竞争导致疲惫、焦虑和意义感的缺失。解决这个问题需要系统性变革和重视幸福感而非持续竞争的文化转变。"},
+{topic:"未来展望",eng:"Looking ahead to the next five years, I envision a life of continuous growth and meaningful achievement. Professionally, I aim to complete my degree and transition into a career that aligns with my interests and values. I plan to develop expertise in my chosen field by combining formal education with practical experience. On a personal level, I hope to maintain a healthy work-life balance, making time for family, friends, and hobbies. I also commit to lifelong learning, not just for career advancement but for personal enrichment. With clear goals and consistent effort, the next five years can be a period of transformation.",chn:"展望未来五年，我设想了一个持续成长和有意义成就的生活。在职业方面，我计划完成学位并过渡到与我的兴趣和价值观相一致的职业。我计划通过将正规教育与实践经验相结合，在所选领域发展专业知识。在个人层面，我希望保持健康的工作生活平衡。我还承诺终身学习，不仅是为了职业发展，也是为了个人充实。凭借明确的目标和持续的努力，未来五年可以是一个转变的时期。"}
+];
+// TTS 状态
+let dailyEssayIdx=0,dailySentences=[],dailySentIdx=0,dailyShadowMode=false,dailyTranslationVisible=true,ttsVoices=[];
+function initTTS(){
+  if(!('speechSynthesis'in window))return;
+  const lv=()=>{ttsVoices=window.speechSynthesis.getVoices()||[];};
+  lv();window.speechSynthesis.onvoiceschanged=lv;
+  // 按日期自动选择当天短文
+  const doy=Math.floor((new Date()-new Date(new Date().getFullYear(),0,0))/86400000);
+  dailyEssayIdx=doy%DAILY_ESSAYS.length;
+  // 恢复设置
+  const savedRate=localStorage.getItem('zw_tts_rate');
+  if(savedRate){document.getElementById('ttsRate').value=savedRate;updateTtsRate(savedRate);}
+}
+function getTtsVoice(){return ttsVoices.find(v=>v.lang==='en-US')||ttsVoices.find(v=>v.lang.startsWith('en'))||null;}
+function getTtsRate(){return parseFloat(document.getElementById('ttsRate').value);}
+function updateTtsRate(val){document.getElementById('ttsRateLabel').textContent=parseFloat(val).toFixed(1)+'x';localStorage.setItem('zw_tts_rate',val);}
+function splitSentences(text){
+  const r=[];
+  const re=/[^.!?]+[.!?]+["']?\s*/g;
+  let m;let lastIndex=0;
+  while((m=re.exec(text))!==null){r.push(m[0].trim());lastIndex=re.lastIndex;}
+  if(lastIndex<text.length){const rest=text.substring(lastIndex).trim();if(rest)r.push(rest);}
+  return r.length?r:[text];
+}
+function renderDailyEssay(){
+  const e=DAILY_ESSAYS[dailyEssayIdx];
+  document.getElementById('dailyEssayTitle').textContent='第 '+(dailyEssayIdx+1)+' 天短文';
+  document.getElementById('dailyEssayBadge').textContent='Day '+(dailyEssayIdx+1)+' / '+DAILY_ESSAYS.length;
+  document.getElementById('dailyEssayTopic').textContent='主题：'+e.topic;
+  dailySentences=splitSentences(e.eng);
+  document.getElementById('dailyEssayEng').innerHTML=dailySentences.map((s,i)=>'<span class="essay-sentence" data-idx="'+i+'" onclick="ttsPlaySingle('+i+')">'+s+'</span> ').join('');
+  document.getElementById('dailyEssayChn').textContent=e.chn;
+  const st=document.getElementById('shadowTotal');if(st)st.textContent='共 '+dailySentences.length+' 句';
+  const sc=document.getElementById('shadowCur');if(sc)sc.textContent='第 1 句';
+}
+function changeDailyEssay(d){
+  ttsStop();
+  dailyEssayIdx=(dailyEssayIdx+d+DAILY_ESSAYS.length)%DAILY_ESSAYS.length;
+  dailySentIdx=0;renderDailyEssay();
+}
+function toggleEssayTranslation(){
+  dailyTranslationVisible=!dailyTranslationVisible;
+  const sec=document.getElementById('dailyEssayChnSection');
+  const btn=event.target;
+  if(dailyTranslationVisible){sec.style.display='block';btn.textContent='隐藏翻译';}
+  else{sec.style.display='none';btn.textContent='显示翻译';}
+}
+function ttsSpeak(text,onEnd){
+  if(!('speechSynthesis'in window)){alert('您的浏览器不支持语音合成，请使用Chrome或Edge');return;}
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US';u.rate=getTtsRate();
+  const v=getTtsVoice();if(v)u.voice=v;
+  if(onEnd)u.onend=onEnd;
+  u.onerror=()=>{setTtsStatus('播放出错');};
+  window.speechSynthesis.speak(u);
+}
+function ttsPlayAll(){
+  ttsStop();
+  const e=DAILY_ESSAYS[dailyEssayIdx];
+  setTtsStatus('🔊 整篇播放中...');highlightSentence(-1);
+  ttsSpeak(e.eng,()=>{setTtsStatus('✅ 播放完成');highlightSentence(-1);});
+}
+function ttsPlaySentence(){
+  ttsStop();dailySentIdx=0;ttsPlayNextSentence();
+}
+function ttsPlayNextSentence(){
+  if(dailySentIdx>=dailySentences.length){setTtsStatus('✅ 逐句播放完成');highlightSentence(-1);return;}
+  highlightSentence(dailySentIdx);
+  setTtsStatus('🔊 播放第 '+(dailySentIdx+1)+'/'+dailySentences.length+' 句...');
+  ttsSpeak(dailySentences[dailySentIdx],()=>{dailySentIdx++;ttsPlayNextSentence();});
+}
+function ttsPlaySingle(idx){
+  ttsStop();dailySentIdx=idx;highlightSentence(idx);
+  setTtsStatus('🔊 播放第 '+(idx+1)+' 句');
+  ttsSpeak(dailySentences[idx],()=>{highlightSentence(-1);setTtsStatus('就绪');});
+}
+function highlightSentence(idx){
+  document.querySelectorAll('.essay-sentence').forEach((el,i)=>el.classList.toggle('highlight',i===idx));
+}
+function ttsPause(){
+  if(!('speechSynthesis'in window))return;
+  if(window.speechSynthesis.speaking&&!window.speechSynthesis.paused){window.speechSynthesis.pause();setTtsStatus('⏸ 已暂停');}
+  else if(window.speechSynthesis.paused){window.speechSynthesis.resume();setTtsStatus('▶ 继续');}
+}
+function ttsStop(){
+  if(!('speechSynthesis'in window))return;
+  window.speechSynthesis.cancel();highlightSentence(-1);setTtsStatus('⏹ 已停止');
+  dailyShadowMode=false;
+  const sp=document.getElementById('shadowPanel');if(sp)sp.classList.remove('show');
+}
+function ttsShadowStart(){
+  ttsStop();dailyShadowMode=true;dailySentIdx=0;
+  document.getElementById('shadowPanel').classList.add('show');
+  ttsShadowPlayCurrent();
+}
+function ttsShadowPlayCurrent(){
+  highlightSentence(dailySentIdx);
+  setTtsStatus('🎤 跟读：TTS朗读第 '+(dailySentIdx+1)+' 句，请仔细听...');
+  document.getElementById('shadowCur').textContent='第 '+(dailySentIdx+1)+' 句';
+  ttsSpeak(dailySentences[dailySentIdx],()=>{
+    if(dailyShadowMode)setTtsStatus('🗣️ 请跟读第 '+(dailySentIdx+1)+' 句...（读完点"下一句"）');
+  });
+}
+function ttsShadowReplay(){ttsShadowPlayCurrent();}
+function ttsShadowNext(){
+  dailySentIdx++;
+  if(dailySentIdx>=dailySentences.length){setTtsStatus('🎉 跟读完成！');ttsShadowExit();return;}
+  ttsShadowPlayCurrent();
+}
+function ttsShadowExit(){
+  dailyShadowMode=false;ttsStop();
+  document.getElementById('shadowPanel').classList.remove('show');
+  setTtsStatus('已退出跟读模式');
+}
+function setTtsStatus(msg){const el=document.getElementById('ttsStatus');if(el)el.textContent=msg;}
+</script>
+
+
+</body></html>
